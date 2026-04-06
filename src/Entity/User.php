@@ -6,10 +6,13 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
-class User
+#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+class User implements UserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -42,6 +45,9 @@ class User
      */
     #[ORM\OneToMany(targetEntity: Event::class, mappedBy: 'organizer')]
     private Collection $events;
+
+    #[ORM\Column]
+    private bool $isVerified = false;
 
     public function __construct()
     {
@@ -163,6 +169,28 @@ class User
                 $event->setOrganizer(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return $this->email; // ou username
+    }
+
+    public function eraseCredentials(): void
+    {
+        // Si tu stockes des données sensibles temporaires, vide-les ici
+    }
+
+    public function isVerified(): bool
+    {
+        return $this->isVerified;
+    }
+
+    public function setIsVerified(bool $isVerified): static
+    {
+        $this->isVerified = $isVerified;
 
         return $this;
     }
