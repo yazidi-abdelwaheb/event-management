@@ -3,17 +3,18 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 #[ORM\HasLifecycleCallbacks]
-class User implements UserInterface
+class User implements UserInterface,PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -32,10 +33,11 @@ class User implements UserInterface
     #[ORM\Column(length: 255)]
     private ?string $password = null;
 
-    #[ORM\Column]
-    private array $roles = [];
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Role $role = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255 , nullable: true)]
     private ?string $avatar = null;
 
     #[ORM\Column]
@@ -49,10 +51,7 @@ class User implements UserInterface
         }
     }
 
-    /**
-     * @var Collection<int, Event>
-     */
-    #[ORM\OneToMany(targetEntity: Event::class, mappedBy: 'organizer')]
+    #[ORM\OneToMany(mappedBy: 'organizer', targetEntity: Event::class)]
     private Collection $events;
 
     #[ORM\Column]
@@ -63,11 +62,13 @@ class User implements UserInterface
         $this->events = new ArrayCollection();
     }
 
+    // ✅ ID
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    // ✅ First Name
     public function getFirstName(): ?string
     {
         return $this->first_name;
@@ -76,10 +77,10 @@ class User implements UserInterface
     public function setFirstName(string $first_name): static
     {
         $this->first_name = $first_name;
-
         return $this;
     }
 
+    // ✅ Last Name
     public function getLastName(): ?string
     {
         return $this->last_name;
@@ -88,10 +89,10 @@ class User implements UserInterface
     public function setLastName(string $last_name): static
     {
         $this->last_name = $last_name;
-
         return $this;
     }
 
+    // ✅ Email
     public function getEmail(): ?string
     {
         return $this->email;
@@ -100,10 +101,10 @@ class User implements UserInterface
     public function setEmail(string $email): static
     {
         $this->email = $email;
-
         return $this;
     }
 
+    // ✅ Password
     public function getPassword(): ?string
     {
         return $this->password;
@@ -112,22 +113,38 @@ class User implements UserInterface
     public function setPassword(string $password): static
     {
         $this->password = $password;
-
         return $this;
     }
 
+    // ✅ Role relation
+    public function getRole(): ?Role
+    {
+        return $this->role;
+    }
+
+    public function setRole(?Role $role): static
+    {
+        $this->role = $role;
+        return $this;
+    }
+
+    // ✅ Symfony Security (IMPORTANT)
     public function getRoles(): array
     {
-        return $this->roles;
+        // retourne ROLE_ADMIN, ROLE_USER...
+        return $this->role ? [$this->role->getLabel()] : ['ROLE_USER'];
     }
 
-    public function setRoles(array $roles): static
+    public function getUserIdentifier(): string
     {
-        $this->roles = $roles;
-
-        return $this;
+        return $this->email;
     }
 
+    public function eraseCredentials(): void
+    {
+    }
+
+    // ✅ Avatar
     public function getAvatar(): ?string
     {
         return $this->avatar;
@@ -136,10 +153,10 @@ class User implements UserInterface
     public function setAvatar(string $avatar): static
     {
         $this->avatar = $avatar;
-
         return $this;
     }
 
+    // ✅ CreatedAt
     public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->created_at;
@@ -148,13 +165,10 @@ class User implements UserInterface
     public function setCreatedAt(\DateTimeImmutable $created_at): static
     {
         $this->created_at = $created_at;
-
         return $this;
     }
 
-    /**
-     * @return Collection<int, Event>
-     */
+    // ✅ Events
     public function getEvents(): Collection
     {
         return $this->events;
@@ -166,32 +180,20 @@ class User implements UserInterface
             $this->events->add($event);
             $event->setOrganizer($this);
         }
-
         return $this;
     }
 
     public function removeEvent(Event $event): static
     {
         if ($this->events->removeElement($event)) {
-            // set the owning side to null (unless already changed)
             if ($event->getOrganizer() === $this) {
                 $event->setOrganizer(null);
             }
         }
-
         return $this;
     }
 
-    public function getUserIdentifier(): string
-    {
-        return $this->email; // ou username
-    }
-
-    public function eraseCredentials(): void
-    {
-        // Si tu stockes des données sensibles temporaires, vide-les ici
-    }
-
+    // ✅ Verified
     public function isVerified(): bool
     {
         return $this->isVerified;
@@ -200,7 +202,11 @@ class User implements UserInterface
     public function setIsVerified(bool $isVerified): static
     {
         $this->isVerified = $isVerified;
-
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->first_name . ' ' . $this->last_name . ' (' . $this->email . ')';
     }
 }

@@ -1,0 +1,268 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block content %}
+<div class="calendar-page">
+
+    <div class="cal-wrapper">
+        <div id="calendar"></div>
+    </div>
+
+    <div id="event-modal" class="modal-overlay" style="display:none;">
+        <div class="modal-box">
+            <button class="modal-close" onclick="closeModal()">&#10005;</button>
+            <div id="modal-title" class="modal-title"></div>
+            <div id="modal-date"  class="modal-meta"></div>
+            <div id="modal-loc"   class="modal-meta"></div>
+            <div id="modal-desc"  class="modal-desc"></div>
+        </div>
+    </div>
+
+</div>
+
+<link  href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.20/index.global.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.20/index.global.min.js"></script>
+
+<style>
+/* ── layout ── */
+.calendar-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    font-family: Arial, sans-serif;
+}
+
+/* ── stat cards ── */
+.cal-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 1.5rem;
+}
+.stat-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+}
+.stat-label {
+    font-size: 12px;
+    color: #6b7280;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+.stat-value {
+    font-size: 26px;
+    font-weight: 700;
+    color: #111827;
+}
+
+/* ── calendar wrapper ── */
+.cal-wrapper {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 16px rgba(0,0,0,.06);
+}
+
+/* ── FullCalendar overrides ── */
+.fc {
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+}
+.fc-toolbar-title {
+    font-size: 18px !important;
+    font-weight: 700;
+    color: #111827;
+}
+.fc-button-primary {
+    background-color: #2563eb !important;
+    border-color:     #2563eb !important;
+    border-radius: 7px !important;
+    font-size: 13px !important;
+    padding: 5px 11px !important;
+    transition: background .15s;
+}
+.fc-button-primary:hover {
+    background-color: #1d4ed8 !important;
+}
+.fc-button-primary:not(.fc-button-active):not(.fc-prev-button):not(.fc-next-button):not(.fc-today-button) {
+    background-color: #f3f4f6 !important;
+    border-color:     #d1d5db !important;
+    color: #374151 !important;
+}
+.fc-button-active {
+    background-color: #1e40af !important;
+}
+.fc-daygrid-day-number {
+    font-size: 13px;
+    color: #374151;
+    padding: 4px 6px;
+}
+.fc-day-today {
+    background: #eff6ff !important;
+}
+.fc-day-today .fc-daygrid-day-number {
+    background: #2563eb;
+    color: #fff;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+}
+.fc-event {
+    border-radius: 5px !important;
+    font-size: 11px;
+    padding: 2px 5px;
+    border: none !important;
+    cursor: pointer;
+}
+.fc-col-header-cell-cushion {
+    font-size: 11px;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    text-decoration: none !important;
+}
+.fc-daygrid-day-number { text-decoration: none !important; }
+
+/* ── modal ── */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.45);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.modal-box {
+    background: #fff;
+    border-radius: 14px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 420px;
+    position: relative;
+    box-shadow: 0 20px 50px rgba(0,0,0,.18);
+}
+.modal-close {
+    position: absolute;
+    top: 14px; right: 14px;
+    background: #f3f4f6;
+    border: none;
+    border-radius: 50%;
+    width: 28px; height: 28px;
+    font-size: 13px;
+    cursor: pointer;
+    color: #374151;
+}
+.modal-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 12px;
+    padding-right: 28px;
+}
+.modal-meta {
+    font-size: 13px;
+    color: #6b7280;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+}
+.modal-desc {
+    margin-top: 12px;
+    font-size: 13px;
+    color: #374151;
+    line-height: 1.6;
+    background: #f9fafb;
+    border-radius: 8px;
+    padding: 10px 12px;
+}
+
+@media (max-width: 640px) {
+    .cal-stats { grid-template-columns: 1fr; }
+    .cal-wrapper { padding: 1rem; }
+    .fc-toolbar { flex-direction: column; gap: 8px; }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const events = [
+        {% for event in events %}
+        {
+            id:          {{ event.id }},
+            title:       "{{ event.title|e('js') }}",
+            start:       "{{ event.startDateTime|date('Y-m-d\\TH:i:s') }}",
+            description: "{{ event.description|e('js') }}",
+            location:    "{{ event.location|e('js') }}"
+        },
+        {% endfor %}
+    ];
+
+   
+
+    /* ── color palette ── */
+    const palette = [
+        '#2563eb','#7c3aed','#059669','#d97706',
+        '#dc2626','#0891b2','#65a30d','#9333ea'
+    ];
+    const colorMap = {};
+    events.forEach((e, i) => { colorMap[e.id] = palette[i % palette.length]; });
+
+    /* ── calendar ── */
+    const cal = new FullCalendar.Calendar(
+        document.getElementById('calendar'),
+        {
+            initialView:  'dayGridMonth',
+            height:       'auto',
+            expandRows:   true,
+            navLinks:     false,
+            editable:     false,
+            selectable:   false,
+            headerToolbar: {
+                left:   'prev,next today',
+                center: 'title',
+                right:  'dayGridMonth,timeGridWeek,listWeek'
+            },
+            events: events.map(e => ({
+                ...e,
+                backgroundColor: colorMap[e.id],
+                textColor: '#ffffff'
+            })),
+            eventClick: function (info) {
+                const ev = info.event;
+                const start = ev.start
+                    ? ev.start.toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' })
+                    : '';
+                document.getElementById('modal-title').textContent = ev.title;
+                document.getElementById('modal-date').innerHTML  = '&#128197; ' + start;
+                document.getElementById('modal-loc').innerHTML   = ev.extendedProps.location
+                    ? '&#128205; ' + ev.extendedProps.location : '';
+                document.getElementById('modal-desc').textContent =
+                    ev.extendedProps.description || 'Aucune description.';
+                document.getElementById('event-modal').style.display = 'flex';
+            }
+        }
+    );
+    cal.render();
+
+    /* ── modal close ── */
+    window.closeModal = function () {
+        document.getElementById('event-modal').style.display = 'none';
+    };
+    document.getElementById('event-modal').addEventListener('click', function (e) {
+        if (e.target === this) closeModal();
+    });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+});
+</script>
+{% endblock %}

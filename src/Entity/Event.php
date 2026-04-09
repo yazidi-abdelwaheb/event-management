@@ -7,6 +7,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Event
 {
     #[ORM\Id]
@@ -41,6 +42,9 @@ class Event
     #[ORM\ManyToOne(inversedBy: 'events')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $organizer = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $image = null;
 
     public function getId(): ?int
     {
@@ -107,28 +111,29 @@ class Event
         return $this;
     }
 
-    public function getCapacity(): ?string
+    public function getCapacity(): ?int
     {
         return $this->capacity;
     }
 
-    public function setCapacity(string $capacity): static
+    public function setCapacity(int $capacity): static
     {
         $this->capacity = $capacity;
 
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+     public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->created_at;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $created_at): static
+    #[ORM\PrePersist]
+    public function setCreatedAtValue(): void
     {
-        $this->created_at = $created_at;
-
-        return $this;
+        if ($this->created_at === null) {
+            $this->created_at = new \DateTimeImmutable();
+        }
     }
 
     public function getUpdatedAt(): ?\DateTimeImmutable
@@ -136,11 +141,12 @@ class Event
         return $this->updated_at;
     }
 
-    public function setUpdatedAt(\DateTimeImmutable $updated_at): static
+    #[ORM\PrePersist]
+    public function setUpdatedAtValue(): void
     {
-        $this->updated_at = $updated_at;
-
-        return $this;
+        if ($this->updated_at === null) {
+            $this->updated_at = new \DateTimeImmutable();
+        }
     }
 
     public function getOrganizer(): ?User
@@ -152,6 +158,17 @@ class Event
     {
         $this->organizer = $organizer;
 
+        return $this;
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(?string $image): static
+    {
+        $this->image = $image;
         return $this;
     }
 }
