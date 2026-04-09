@@ -12,6 +12,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+#[ORM\HasLifecycleCallbacks]
 class User implements UserInterface
 {
     #[ORM\Id]
@@ -39,6 +40,14 @@ class User implements UserInterface
 
     #[ORM\Column]
     private ?\DateTimeImmutable $created_at = null;
+
+    #[ORM\PrePersist]
+    public function setCreatedAtValue(): void
+    {
+        if ($this->created_at === null) {
+            $this->created_at = new \DateTimeImmutable();
+        }
+    }
 
     /**
      * @var Collection<int, Event>
