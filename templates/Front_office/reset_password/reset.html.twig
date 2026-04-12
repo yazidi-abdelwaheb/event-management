@@ -1,0 +1,312 @@
+{% extends 'Front_office/base.html.twig' %}
+
+{% block title %}Reset your password{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .reset-page {
+        min-height: 100vh;
+        background: #f8f7f4;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+    }
+
+    .reset-card {
+        width: 100%;
+        max-width: 420px;
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #e5e7eb;
+        padding: 2rem;
+    }
+
+    .reset-logo {
+        width: 48px;
+        height: 48px;
+        background: #1a1a2e;
+        border-radius: 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .reset-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin: 0 0 4px;
+    }
+
+    .reset-subtitle {
+        font-size: 14px;
+        color: #6b7280;
+        margin: 0;
+    }
+
+    .form-label {
+        font-size: 13px !important;
+        font-weight: 600 !important;
+        color: #374151 !important;
+        margin-bottom: 6px !important;
+    }
+
+    .input-group-text {
+        background: #fafafa !important;
+        border-color: #e5e7eb !important;
+        color: #9ca3af !important;
+    }
+
+    .form-control {
+        background: #fafafa !important;
+        border-color: #e5e7eb !important;
+        font-size: 14px !important;
+        color: #111827 !important;
+        border-left: none !important;
+    }
+
+    .form-control:focus {
+        border-color: #1a1a2e !important;
+        box-shadow: none !important;
+        background: #fff !important;
+    }
+
+    .input-group:focus-within .input-group-text {
+        border-color: #1a1a2e !important;
+    }
+
+    .form-control.is-invalid {
+        border-color: #dc2626 !important;
+    }
+
+    .input-group:has(.is-invalid) .input-group-text,
+    .input-group:has(.is-invalid) .toggle-pwd {
+        border-color: #dc2626 !important;
+    }
+
+    .invalid-feedback { font-size: 12px !important; color: #dc2626 !important; }
+
+    .toggle-pwd {
+        background: #fafafa !important;
+        border-color: #e5e7eb !important;
+        border-left: none !important;
+        color: #9ca3af !important;
+    }
+
+    .toggle-pwd:hover {
+        background: #f3f4f6 !important;
+        color: #374151 !important;
+    }
+
+    .input-group:focus-within .toggle-pwd {
+        border-color: #1a1a2e !important;
+    }
+
+    .btn-reset {
+        background: #1a1a2e !important;
+        border: none !important;
+        border-radius: 8px !important;
+        font-size: 15px !important;
+        font-weight: 600 !important;
+        padding: 11px !important;
+        transition: opacity 0.2s !important;
+    }
+
+    .btn-reset:hover { opacity: 0.85; }
+
+    .back-link {
+        font-size: 13px;
+        color: #1a1a2e;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .back-link:hover { text-decoration: underline; }
+
+    .strength-bar {
+        height: 4px;
+        border-radius: 4px;
+        background: #e5e7eb;
+        margin-top: 8px;
+        overflow: hidden;
+    }
+
+    .strength-fill {
+        height: 100%;
+        width: 0%;
+        border-radius: 4px;
+        transition: width 0.3s, background 0.3s;
+    }
+
+    .strength-label {
+        font-size: 11px;
+        margin-top: 4px;
+        color: #9ca3af;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="reset-page">
+  <div class="w-100 px-3" style="max-width: 420px;">
+
+    <div class="text-center mb-4">
+      <div class="reset-logo mb-3">
+        <i class="bi bi-key-fill text-white" style="font-size: 20px;"></i>
+      </div>
+      <h1 class="reset-title">Choose a new password</h1>
+      <p class="reset-subtitle">Make sure it's strong and unique</p>
+    </div>
+
+    <div class="reset-card">
+
+      {{ form_start(resetForm, {'attr': {'novalidate': 'novalidate'}}) }}
+
+        {% if resetForm.vars.errors|length > 0 %}
+          <div class="d-flex align-items-center gap-2 mb-3 py-2 px-3"
+               style="background:#fef2f2; border:1px solid #fecaca; border-radius:8px; font-size:13px; color:#991b1b;">
+            <i class="bi bi-exclamation-circle-fill" style="color:#dc2626; font-size:14px;"></i>
+            {{ form_errors(resetForm) }}
+          </div>
+        {% endif %}
+
+        <div class="mb-3">
+          {{ form_label(resetForm.plainPassword.first) }}
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="bi bi-lock" style="font-size:14px;"></i>
+            </span>
+            {{ form_widget(resetForm.plainPassword.first, {
+              'attr': {
+                'class': 'form-control' ~ (resetForm.plainPassword.first.vars.errors|length ? ' is-invalid' : ''),
+                'placeholder': '••••••••',
+                'id': resetForm.plainPassword.first.vars.id,
+                'oninput': 'checkStrength(this.value)'
+              }
+            }) }}
+            <button type="button" class="btn toggle-pwd"
+                    onclick="togglePwd('{{ resetForm.plainPassword.first.vars.id }}', 'eye1')">
+              <i class="bi bi-eye" id="eye1" style="font-size:14px;"></i>
+            </button>
+            {% if resetForm.plainPassword.first.vars.errors|length %}
+              <div class="invalid-feedback d-block">
+                {% for error in resetForm.plainPassword.first.vars.errors %}
+                  {{ error.message }}
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="strength-bar">
+            <div class="strength-fill" id="strength-fill"></div>
+          </div>
+          <p class="strength-label" id="strength-label">Enter a password</p>
+        </div>
+
+        <div class="mb-4">
+          {{ form_label(resetForm.plainPassword.second) }}
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="bi bi-lock-fill" style="font-size:14px;"></i>
+            </span>
+            {{ form_widget(resetForm.plainPassword.second, {
+              'attr': {
+                'class': 'form-control' ~ (resetForm.plainPassword.second.vars.errors|length ? ' is-invalid' : ''),
+                'placeholder': '••••••••',
+                'id': resetForm.plainPassword.second.vars.id
+              }
+            }) }}
+            <button type="button" class="btn toggle-pwd"
+                    onclick="togglePwd('{{ resetForm.plainPassword.second.vars.id }}', 'eye2')">
+              <i class="bi bi-eye" id="eye2" style="font-size:14px;"></i>
+            </button>
+            {% if resetForm.plainPassword.second.vars.errors|length %}
+              <div class="invalid-feedback d-block">
+                {% for error in resetForm.plainPassword.second.vars.errors %}
+                  {{ error.message }}
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+
+          {% if resetForm.plainPassword.vars.errors|length %}
+            <div class="mt-2 d-flex align-items-center gap-2"
+                 style="font-size:12px; color:#dc2626;">
+              <i class="bi bi-exclamation-circle-fill" style="font-size:12px;"></i>
+              {% for error in resetForm.plainPassword.vars.errors %}
+                {{ error.message }}
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        
+        <div class="mb-4" style="background:#f8f7f4; border-radius:8px; padding:12px 16px;">
+          <p style="font-size:12px; font-weight:600; color:#374151; margin:0 0 8px;">
+            Strong password requirements
+          </p>
+          <ul style="font-size:12px; color:#6b7280; margin:0; padding-left:16px; line-height:1.8;">
+            <li>At least 6 characters</li>
+            <li>One uppercase letter</li>
+            <li>One number or special character</li>
+            <li>Not a compromised password</li>
+          </ul>
+        </div>
+
+        
+        <div class="d-grid mb-3">
+          <button type="submit" class="btn btn-primary btn-reset text-white">
+            <i class="bi bi-check-lg me-2" style="font-size:14px;"></i>
+            Reset my password
+          </button>
+        </div>
+
+      {{ form_end(resetForm) }}
+
+      <div class="text-center">
+        <a href="{{ path('app_login') }}" class="back-link">
+          <i class="bi bi-arrow-left me-1" style="font-size:12px;"></i>
+          Back to login
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+function togglePwd(inputId, iconId) {
+    const input = document.getElementById(inputId);
+    const icon  = document.getElementById(iconId);
+    input.type     = input.type === 'password' ? 'text' : 'password';
+    icon.className = input.type === 'password' ? 'bi bi-eye' : 'bi bi-eye-slash';
+}
+
+function checkStrength(value) {
+    const fill  = document.getElementById('strength-fill');
+    const label = document.getElementById('strength-label');
+    let score = 0;
+
+    if (value.length >= 6)             score++;
+    if (/[A-Z]/.test(value))            score++;
+    if (/[0-9]/.test(value))            score++;
+    if (/[^A-Za-z0-9]/.test(value))     score++;
+
+    const levels = [
+        { width: '0%',   color: '#e5e7eb', text: 'Enter a password', labelColor: '#9ca3af' },
+        { width: '25%',  color: '#dc2626', text: 'Weak',             labelColor: '#dc2626' },
+        { width: '50%',  color: '#f97316', text: 'Fair',             labelColor: '#f97316' },
+        { width: '75%',  color: '#eab308', text: 'Good',             labelColor: '#ca8a04' },
+        { width: '100%', color: '#16a34a', text: 'Strong',           labelColor: '#16a34a' },
+    ];
+
+    const level = value.length === 0 ? levels[0] : (levels[score] ?? levels[1]);
+    fill.style.width      = level.width;
+    fill.style.background = level.color;
+    label.textContent     = level.text;
+    label.style.color     = level.labelColor;
+}
+</script>
+{% endblock %}

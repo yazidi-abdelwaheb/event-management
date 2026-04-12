@@ -1,0 +1,192 @@
+{% extends 'Front_office/base.html.twig' %}
+
+{% block title %}Password Reset Email Sent{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .sent-page {
+        min-height: 100vh;
+        background: #f8f7f4;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+    }
+
+    .sent-card {
+        width: 100%;
+        max-width: 450px;
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #e5e7eb;
+        padding: 2rem;
+    }
+
+    .sent-logo {
+        width: 64px;
+        height: 64px;
+        background: #f0fdf4;
+        border: 2px solid #bbf7d0;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .sent-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin: 0 0 4px;
+    }
+
+    .sent-subtitle {
+        font-size: 14px;
+        color: #6b7280;
+        margin: 0;
+    }
+
+    .info-box {
+        background: #f8f7f4;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 14px 16px;
+        font-size: 13px;
+        color: #374151;
+        line-height: 1.6;
+    }
+
+    .expiry-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: #fef3c7;
+        border: 1px solid #fde68a;
+        border-radius: 6px;
+        padding: 3px 10px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #92400e;
+        margin-top: 8px;
+    }
+
+    .spam-box {
+        background: #f0f9ff;
+        border: 1px solid #bae6fd;
+        border-radius: 10px;
+        padding: 12px 16px;
+        font-size: 13px;
+        color: #0369a1;
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .btn-back {
+        background: #1a1a2e !important;
+        border: none !important;
+        border-radius: 8px !important;
+        font-size: 15px !important;
+        font-weight: 600 !important;
+        padding: 11px !important;
+        transition: opacity 0.2s !important;
+    }
+
+    .btn-back:hover { opacity: 0.85; }
+
+    .retry-link {
+        font-size: 13px;
+        color: #1a1a2e;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .retry-link:hover { text-decoration: underline; color: #1a1a2e; }
+
+    .divider {
+        height: 1px;
+        background: #e5e7eb;
+        margin: 1.25rem 0;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="sent-page">
+  <div class="w-100 px-3" style="max-width: 420px;">
+
+    <div class="text-center mb-4">
+      <div class="sent-logo mb-3">
+        <i class="bi bi-envelope-check-fill" style="font-size: 26px; color: #16a34a;"></i>
+      </div>
+      <h1 class="sent-title">Check your inbox!</h1>
+      <p class="sent-subtitle">We've sent you a password reset link</p>
+    </div>
+
+    <div class="sent-card">
+
+      <div class="info-box mb-3">
+        <div class="d-flex gap-2">
+          <i class="bi bi-info-circle-fill" style="color:#6b7280; font-size:15px; flex-shrink:0; margin-top:2px;"></i>
+          <span>
+            If an account matching your email exists, then an email was just sent that contains a link to reset your password.
+          </span>
+        </div>
+        <div class="expiry-badge mt-2">
+          <i class="bi bi-clock" style="font-size:11px;"></i>
+          Link expires in {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}
+        </div>
+      </div>
+
+      <div class="spam-box mb-4">
+        <i class="bi bi-exclamation-circle-fill" style="font-size:15px; flex-shrink:0; margin-top:1px;"></i>
+        <span>
+          Didn't receive an email? Check your <strong>spam folder</strong> or
+          <a href="{{ path('app_forgot_password_request') }}" class="retry-link">try again</a>.
+        </span>
+      </div>
+
+      <div class="divider"></div>
+
+      <p style="font-size:13px; font-weight:600; color:#374151; margin-bottom:12px;">What's next?</p>
+      <div class="d-flex flex-column gap-2 mb-4">
+
+        <div class="d-flex align-items-center gap-3">
+          <div style="width:28px; height:28px; border-radius:50%; background:#1a1a2e;
+                      display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <span style="color:white; font-size:12px; font-weight:600;">1</span>
+          </div>
+          <span style="font-size:13px; color:#374151;">Open the email we sent you</span>
+        </div>
+
+        <div class="d-flex align-items-center gap-3">
+          <div style="width:28px; height:28px; border-radius:50%; background:#1a1a2e;
+                      display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <span style="color:white; font-size:12px; font-weight:600;">2</span>
+          </div>
+          <span style="font-size:13px; color:#374151;">Click the reset link inside</span>
+        </div>
+
+        <div class="d-flex align-items-center gap-3">
+          <div style="width:28px; height:28px; border-radius:50%; background:#1a1a2e;
+                      display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <span style="color:white; font-size:12px; font-weight:600;">3</span>
+          </div>
+          <span style="font-size:13px; color:#374151;">Choose a new password</span>
+        </div>
+
+      </div>
+
+      
+      <div class="d-grid">
+        <a href="{{ path('app_login') }}" class="btn btn-primary btn-back text-white text-center">
+          <i class="bi bi-arrow-left me-2" style="font-size:13px;"></i>
+          Back to Login
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

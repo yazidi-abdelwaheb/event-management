@@ -1,0 +1,13 @@
+{% extends 'Front_office/base.html.twig' %}
+
+{% block title %}Edit Event{% endblock %}
+
+{% block body %}
+    <h1>Edit Event</h1>
+
+    {{ include('Front_office/event/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_event_index') }}">back to list</a>
+
+    {{ include('Front_office/event/_delete_form.html.twig') }}
+{% endblock %}

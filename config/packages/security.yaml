@@ -13,17 +13,30 @@ security:
             pattern: ^/(_profiler|_wdt|assets|build)/
             security: false
 
-        main:
+        admin:
+            pattern: ^/admin 
             lazy: true
-            provider: app_user_provider
+            provider: app_user_provider 
             form_login:
                 login_path: admin_login
                 check_path: admin_login
-                default_target_path: admin
+                default_target_path: admin 
                 enable_csrf: true
             logout:
                 path: admin_logout
                 target: admin_login
+
+        main:
+            lazy: true
+            provider: app_user_provider
+            form_login:
+                login_path: app_login 
+                check_path: app_login
+                default_target_path: app_home_page
+                enable_csrf: true
+            logout:
+                path: app_logout
+                target: app_login
 
     access_control:
         - { path: ^/admin/login, roles: PUBLIC_ACCESS }

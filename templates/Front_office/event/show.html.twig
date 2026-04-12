@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'Front_office/base.html.twig' %}
 
 {% block title %}Event{% endblock %}
 
@@ -50,5 +50,5 @@
 
     <a href="{{ path('app_event_edit', {'id': event.id}) }}">edit</a>
 
-    {{ include('event/_delete_form.html.twig') }}
+    {{ include('Front_office/event/_delete_form.html.twig') }}
 {% endblock %}

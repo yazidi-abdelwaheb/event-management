@@ -1,0 +1,288 @@
+{% extends 'Front_office/base.html.twig' %}
+
+{% block title %}Créer un compte{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .register-page {
+        min-height: 100vh;
+        background: #f8f7f4;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+    }
+
+    .register-card {
+        width: 100%;
+        max-width: 520px;
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #e5e7eb;
+        padding: 2rem;
+    }
+
+    .register-logo {
+        width: 48px;
+        height: 48px;
+        background: #1a1a2e;
+        border-radius: 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .register-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin: 0 0 4px;
+    }
+
+    .register-subtitle {
+        font-size: 14px;
+        color: #6b7280;
+        margin: 0;
+    }
+
+    
+    .btn-register {
+        background: #1a1a2e !important;
+        border: none !important;
+        border-radius: 8px !important;
+        font-size: 15px !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.3px;
+        padding: 11px !important;
+        transition: opacity 0.2s !important;
+    }
+
+    .btn-register:hover { opacity: 0.85; }
+
+    .login-link {
+        font-size: 13px;
+        color: #1a1a2e;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .login-link:hover { text-decoration: underline; color: #1a1a2e; }
+
+    .toggle-pwd {
+        background: #fafafa !important;
+        border-color: #e5e7eb !important;
+        border-left: none !important;
+        color: #9ca3af !important;
+    }
+
+    .toggle-pwd:hover {
+        background: #f3f4f6 !important;
+        color: #374151 !important;
+    }
+
+    .divider {
+        height: 1px;
+        background: #e5e7eb;
+        margin: 1.25rem 0;
+    }
+     .strength-bar {
+        height: 4px;
+        border-radius: 4px;
+        background: #e5e7eb;
+        margin-top: 8px;
+        overflow: hidden;
+    }
+
+    .strength-fill {
+        height: 100%;
+        width: 0%;
+        border-radius: 4px;
+        transition: width 0.3s, background 0.3s;
+    }
+
+    .strength-label {
+        font-size: 11px;
+        margin-top: 4px;
+        color: #9ca3af;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="register-page">
+  <div class="w-100 px-3" style="max-width: 520px;">
+
+    <div class="text-center mb-4">
+      <div class="register-logo mb-3">
+        <i class="bi bi-person-plus-fill text-white" style="font-size: 20px;"></i>
+      </div>
+      <h1 class="register-title">Create an account</h1>
+      <p class="register-subtitle">Join us, it's free!</p>
+    </div>
+
+    <div class="register-card">
+
+      {{ form_start(registrationForm) }}
+
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          {{ form_label(registrationForm.firstName) }}
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="bi bi-person" style="font-size:14px;"></i>
+            </span>
+            {% set errFirst = registrationForm.firstName.vars.errors|length ? 'is-invalid' : '' %}
+            {{ form_widget(registrationForm.firstName, {
+              'attr': {'class': 'form-control ' ~ errFirst, 'placeholder': 'Prénom'}
+            }) }}
+            <div class="invalid-feedback">{{ form_errors(registrationForm.firstName) }}</div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          {{ form_label(registrationForm.lastName) }}
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="bi bi-person" style="font-size:14px;"></i>
+            </span>
+            {% set errLast = registrationForm.lastName.vars.errors|length ? 'is-invalid' : '' %}
+            {{ form_widget(registrationForm.lastName, {
+              'attr': {'class': 'form-control ' ~ errLast, 'placeholder': 'Nom'}
+            }) }}
+            <div class="invalid-feedback">{{ form_errors(registrationForm.lastName) }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        {{ form_label(registrationForm.email) }}
+        <div class="input-group">
+          <span class="input-group-text">
+            <i class="bi bi-envelope" style="font-size:14px;"></i>
+          </span>
+          {% set errEmail = registrationForm.email.vars.errors|length ? 'is-invalid' : '' %}
+          {{ form_widget(registrationForm.email, {
+            'attr': {'class': 'form-control ' ~ errEmail, 'placeholder': 'vous@exemple.com'}
+          }) }}
+          <div class="invalid-feedback">{{ form_errors(registrationForm.email) }}</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="mb-3">
+        {{ form_label(registrationForm.plainPassword.first) }}
+        <div class="input-group">
+            <span class="input-group-text">
+            <i class="bi bi-lock" style="font-size:14px;"></i>
+            </span>
+            {% set errP1 = registrationForm.plainPassword.first.vars.errors|length ? 'is-invalid' : '' %}
+            {{ form_widget(registrationForm.plainPassword.first, {
+            'attr': {'class': 'form-control ' ~ errP1, 'placeholder': '••••••••' , 'oninput': 'checkStrength(this.value)'}
+            }) }}
+            <button type="button" class="btn toggle-pwd"
+                    onclick="togglePwd('{{ registrationForm.plainPassword.first.vars.id }}', 'eye1')">
+            <i class="bi bi-eye" id="eye1" style="font-size:14px;"></i>
+            </button>
+            <div class="invalid-feedback">{{ form_errors(registrationForm.plainPassword.first) }}</div>
+        </div>
+        <div class="strength-bar">
+            <div class="strength-fill" id="strength-fill"></div>
+          </div>
+          <p class="strength-label" id="strength-label">Enter a password</p>
+    </div>
+
+      <div class="mb-4">
+        {{ form_label(registrationForm.plainPassword.second) }}
+        <div class="input-group">
+            <span class="input-group-text">
+            <i class="bi bi-lock-fill" style="font-size:14px;"></i>
+            </span>
+            {% set errP2 = registrationForm.plainPassword.second.vars.errors|length ? 'is-invalid' : '' %}
+            {{ form_widget(registrationForm.plainPassword.second, {
+            'attr': {'class': 'form-control ' ~ errP2, 'placeholder': '••••••••'}
+            }) }}
+            <button type="button" class="btn toggle-pwd"
+                    onclick="togglePwd('{{ registrationForm.plainPassword.second.vars.id }}', 'eye2')">
+            <i class="bi bi-eye" id="eye2" style="font-size:14px;"></i>
+            </button>
+            <div class="invalid-feedback">{{ form_errors(registrationForm.plainPassword.second) }}</div>
+        </div>
+    </div>
+
+    <div class="mb-4" style="background:#f8f7f4; border-radius:8px; padding:12px 16px;">
+          <p style="font-size:12px; font-weight:600; color:#374151; margin:0 0 8px;">
+            Strong password requirements
+          </p>
+          <ul style="font-size:12px; color:#6b7280; margin:0; padding-left:16px; line-height:1.8;">
+            <li>At least 6 characters</li>
+            <li>One uppercase letter</li>
+            <li>One number or special character</li>
+            <li>Not a compromised password</li>
+          </ul>
+        </div>
+
+      <div class="form-check mb-4">
+        {{ form_widget(registrationForm.agreeTerms, {'attr': {'class': 'form-check-input'}}) }}
+        <label class="form-check-label">
+          I agree to the <a href="#" style="color:#1a1a2e; font-weight:600;">Terms of Service</a>
+        </label>
+        <div class="invalid-feedback d-block" style="font-size:12px; color:#dc2626;">
+          {{ form_errors(registrationForm.agreeTerms) }}
+        </div>
+      </div>
+
+      <div class="d-grid mb-3">
+        <button type="submit" class="btn btn-primary btn-register text-white">
+            Sign Up
+        </button>
+      </div>
+
+      <div class="text-center">
+        <span style="font-size:13px; color:#6b7280;">Already have an account? </span>
+        <a href="{{ path('app_login') }}" class="login-link">Sign in</a>
+      </div>
+
+      {{ form_end(registrationForm) }}
+
+    </div>
+  </div>
+</div>
+
+<script>
+function togglePwd(inputId, iconId) {
+    const input = document.getElementById(inputId);
+    const icon  = document.getElementById(iconId);
+    input.type  = input.type === 'password' ? 'text' : 'password';
+    icon.className = input.type === 'password' ? 'bi bi-eye' : 'bi bi-eye-slash';
+}
+
+
+function checkStrength(value) {
+    const fill  = document.getElementById('strength-fill');
+    const label = document.getElementById('strength-label');
+    let score = 0;
+
+    if (value.length >= 6)             score++;
+    if (/[A-Z]/.test(value))            score++;
+    if (/[0-9]/.test(value))            score++;
+    if (/[^A-Za-z0-9]/.test(value))     score++;
+
+    const levels = [
+        { width: '0%',   color: '#e5e7eb', text: 'Enter a password', labelColor: '#9ca3af' },
+        { width: '25%',  color: '#dc2626', text: 'Weak',             labelColor: '#dc2626' },
+        { width: '50%',  color: '#f97316', text: 'Fair',             labelColor: '#f97316' },
+        { width: '75%',  color: '#eab308', text: 'Good',             labelColor: '#ca8a04' },
+        { width: '100%', color: '#16a34a', text: 'Strong',           labelColor: '#16a34a' },
+    ];
+
+    const level = value.length === 0 ? levels[0] : (levels[score] ?? levels[1]);
+    fill.style.width      = level.width;
+    fill.style.background = level.color;
+    label.textContent     = level.text;
+    label.style.color     = level.labelColor;
+}
+</script>
+</script>
+{% endblock %}

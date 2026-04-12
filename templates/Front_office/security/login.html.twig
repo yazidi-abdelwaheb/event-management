@@ -1,0 +1,197 @@
+{% extends 'Front_office/base.html.twig' %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .login-page {
+        min-height: 100vh;
+        background: #f8f7f4;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .login-card {
+        width: 100%;
+        max-width: 420px;
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #e5e7eb;
+        padding: 2rem;
+    }
+
+    .login-logo {
+        width: 48px;
+        height: 48px;
+        background: #1a1a2e;
+        border-radius: 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .login-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin: 0 0 4px;
+    }
+
+    .login-subtitle {
+        font-size: 14px;
+        color: #6b7280;
+        margin: 0;
+    }
+    .btn-login {
+        background: #1a1a2e !important;
+        border: none !important;
+        border-radius: 8px !important;
+        font-size: 15px !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.3px;
+        padding: 11px !important;
+        transition: opacity 0.2s !important;
+    }
+
+    .btn-login:hover { opacity: 0.85; }
+
+    .forgot-link {
+        font-size: 12px;
+        color: #1a1a2e;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .forgot-link:hover { text-decoration: underline; color: #1a1a2e; }
+
+    .register-link {
+        font-size: 13px;
+        color: #1a1a2e;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .register-link:hover { text-decoration: underline; color: #1a1a2e; }
+
+    .toggle-pwd {
+        background: #fafafa !important;
+        border-color: #e5e7eb !important;
+        border-left: none !important;
+        color: #9ca3af !important;
+    }
+
+    .toggle-pwd:hover {
+        background: #f3f4f6 !important;
+        color: #374151 !important;
+    }
+
+    .input-group:focus-within .toggle-pwd {
+        border-color: #1a1a2e !important;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="login-page">
+  <div class="w-100 px-3" style="max-width: 420px;">
+
+    <div class="text-center mb-4">
+      <div class="login-logo mb-3">
+        <i class="bi bi-person-fill text-white" style="font-size: 20px;"></i>
+      </div>
+      <h1 class="login-title">Welcome back!</h1>
+      <p class="login-subtitle">Sign in to your account.</p>
+    </div>
+
+    <div class="login-card">
+
+      {% if error %}
+        <div class="alert d-flex align-items-center gap-2 py-2 px-3 mb-3"
+             style="background:#fef2f2; border:1px solid #fecaca; border-radius:8px; font-size:13px; color:#991b1b;">
+          <i class="bi bi-exclamation-circle-fill" style="font-size:14px; color:#dc2626;"></i>
+          {{ error.messageKey|trans(error.messageData, 'security') }}
+        </div>
+      {% endif %}
+
+      {% if app.user %}
+        <div class="alert d-flex align-items-center gap-2 py-2 px-3 mb-3"
+             style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; font-size:13px; color:#166534;">
+          <i class="bi bi-check-circle-fill"></i>
+          Signed in as {{ app.user.userIdentifier }}.
+          <a href="{{ logout_path() }}" class="ms-1 fw-semibold" style="color:#166534;">Logout</a>
+        </div>
+      {% endif %}
+
+      <form method="post">
+
+        <div class="mb-3">
+          <label for="username" class="form-label">Email Address</label>
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="bi bi-envelope" style="font-size:14px;"></i>
+            </span>
+            <input type="email"
+                   id="username"
+                   name="_username"
+                   value="{{ last_username }}"
+                   class="form-control"
+                   placeholder="you@exemple.com"
+                   autocomplete="email"
+                   required autofocus>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <label for="password" class="form-label mb-0">Password</label>
+            <a href="{{ path('app_forgot_password_request') }}" class="forgot-link">Forgot your password?</a>
+          </div>
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="bi bi-lock" style="font-size:14px;"></i>
+            </span>
+            <input type="password"
+                   id="password"
+                   name="_password"
+                   class="form-control"
+                   placeholder="••••••••"
+                   autocomplete="current-password"
+                   required>
+            <button type="button" class="btn toggle-pwd" onclick="togglePassword()">
+              <i class="bi bi-eye" id="eye-icon" style="font-size:14px;"></i>
+            </button>
+          </div>
+        </div>
+
+        <input type="hidden" name="_csrf_token"
+               data-controller="csrf-protection"
+               value="{{ csrf_token('authenticate') }}">
+
+        <div class="d-grid">
+          <button type="submit" class="btn btn-primary btn-login text-white">
+            Sign In
+          </button>
+        </div>
+
+      </form>
+
+      <div class="text-center mt-3">
+        <span style="font-size:13px; color:#6b7280;">Don't have an account yet? </span>
+        <a href="{{ path('app_register') }}" class="register-link">Sign up</a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+    function togglePassword() {
+        const input = document.getElementById('password');
+        const icon  = document.getElementById('eye-icon');
+        input.type  = input.type === 'password' ? 'text' : 'password';
+        icon.className = input.type === 'password' ? 'bi bi-eye' : 'bi bi-eye-slash';
+    }
+</script>
+{% endblock %}

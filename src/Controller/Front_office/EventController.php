@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Front_office;
 
 use App\Entity\Event;
 use App\Form\EventType;
@@ -17,7 +17,7 @@ final class EventController extends AbstractController
     #[Route(name: 'app_event_index', methods: ['GET'])]
     public function index(EventRepository $eventRepository): Response
     {
-        return $this->render('event/index.html.twig', [
+        return $this->render('Front_office/event/index.html.twig', [
             'events' => $eventRepository->findAll(),
         ]);
     }
@@ -36,7 +36,7 @@ final class EventController extends AbstractController
             return $this->redirectToRoute('app_event_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->render('event/new.html.twig', [
+        return $this->render('Front_office/event/new.html.twig', [
             'event' => $event,
             'form' => $form,
         ]);
@@ -45,7 +45,7 @@ final class EventController extends AbstractController
     #[Route('/{id}', name: 'app_event_show', methods: ['GET'])]
     public function show(Event $event): Response
     {
-        return $this->render('event/show.html.twig', [
+        return $this->render('Front_office/event/show.html.twig', [
             'event' => $event,
         ]);
     }
@@ -62,7 +62,7 @@ final class EventController extends AbstractController
             return $this->redirectToRoute('app_event_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->render('event/edit.html.twig', [
+        return $this->render('Front_office/event/edit.html.twig', [
             'event' => $event,
             'form' => $form,
         ]);
