@@ -1,0 +1,36 @@
+{% extends 'front_office/base.html.twig' %}
+
+{% block title %}Category{% endblock %}
+
+{% block body %}
+
+    <style>
+        .category-section {
+            background: #f8f9fa;
+        }
+
+
+    </style>
+    
+    <section class="category-section py-5">
+    <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold">Browse Categories</h2>
+                <p class="text-muted">Find the best events by category</p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            {% for category in categories %}
+                {% include 'Front_office/component/_categoryCard.html.twig' with {'category': category} %}
+            {% endfor %}
+        </div>
+
+        {% include 'Front_office/component/_paginationCard.html.twig' with {'current_page': current_page, 'total_pages': total_pages} %}
+
+
+    </div>
+</section>
+{% endblock %}

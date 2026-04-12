@@ -1,0 +1,101 @@
+<footer style="background:#1a1a2e; color:rgba(255,255,255,0.7); padding:3rem 2rem 1.5rem; margin-top:auto;">
+  <div class="container">
+    <div class="row g-4 mb-4">
+
+      <div class="col-lg-4">
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <div style="width:36px; height:36px; background:rgba(255,255,255,0.1);
+                      border-radius:8px; display:flex; align-items:center; justify-content:center;">
+            <image src="{{ asset('logo.png') }}" width="50" height="50" alt="Logo Event Management Platform">
+          </div>
+          <span style="color:white; font-size:16px; font-weight:700;">Event Management</span>
+        </div>
+        <p style="font-size:13px; line-height:1.7; max-width:280px; margin-bottom:1.25rem;">
+            Event Management is your go-to platform for discovering and booking unforgettable events. From concerts to conferences, we connect you with the best experiences around. Join us and never miss out on the excitement!
+        </p>
+        <div class="d-flex gap-2">
+          <a href="#" style="width:32px; height:32px; background:rgba(255,255,255,0.1); border-radius:6px;
+                             display:flex; align-items:center; justify-content:center; text-decoration:none;">
+            <i class="bi bi-facebook" style="color:white; font-size:13px;"></i>
+          </a>
+          <a href="#" style="width:32px; height:32px; background:rgba(255,255,255,0.1); border-radius:6px;
+                             display:flex; align-items:center; justify-content:center; text-decoration:none;">
+            <i class="bi bi-linkedin" style="color:white; font-size:13px;"></i>
+          </a>
+          <a href="#" style="width:32px; height:32px; background:rgba(255,255,255,0.1); border-radius:6px;
+                             display:flex; align-items:center; justify-content:center; text-decoration:none;">
+            <i class="bi bi-twitter-x" style="color:white; font-size:13px;"></i>
+          </a>
+          <a href="#" style="width:32px; height:32px; background:rgba(255,255,255,0.1); border-radius:6px;
+                             display:flex; align-items:center; justify-content:center; text-decoration:none;">
+            <i class="bi bi-instagram" style="color:white; font-size:13px;"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="col-6 col-lg-2">
+        <p style="color:white; font-size:12px; font-weight:700; margin-bottom:1rem;
+                  text-transform:uppercase; letter-spacing:0.6px;">Navigation</p>
+        <div class="d-flex flex-column gap-2">
+          <a href="{{ path('app_home_page') }}" class="footer-link">Home</a>
+          <a href="#" class="footer-link">Events</a>
+          <a href="{{ path('app_category') }}" class="footer-link">Categories</a>
+          <a href="#" class="footer-link">About</a>
+        </div>
+      </div>
+
+      <div class="col-6 col-lg-2">
+        <p style="color:white; font-size:12px; font-weight:700; margin-bottom:1rem;
+                  text-transform:uppercase; letter-spacing:0.6px;">Support</p>
+        <div class="d-flex flex-column gap-2">
+          <a href="#" class="footer-link">Contact</a>
+          <a href="#" class="footer-link">FAQ</a>
+          <a href="#" class="footer-link">Confidentiality</a>
+          <a href="#" class="footer-link">CGU</a>
+        </div>
+      </div>
+
+      <div class="col-lg-4">
+        <p style="color:white; font-size:12px; font-weight:700; margin-bottom:1rem;
+                  text-transform:uppercase; letter-spacing:0.6px;">Contact</p>
+        <div class="d-flex flex-column gap-3">
+          <div class="d-flex align-items-center gap-2" style="font-size:13px;">
+            <i class="bi bi-envelope" style="color:rgba(255,255,255,0.5); font-size:14px;"></i>
+            contact@eventmanage.com
+          </div>
+          <div class="d-flex align-items-center gap-2" style="font-size:13px;">
+            <i class="bi bi-telephone" style="color:rgba(255,255,255,0.5); font-size:14px;"></i>
+            +216 XX XXX XXX
+          </div>
+          <div class="d-flex align-items-center gap-2" style="font-size:13px;">
+            <i class="bi bi-geo-alt" style="color:rgba(255,255,255,0.5); font-size:14px;"></i>
+            Tunis, Tunisie
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="height:1px; background:rgba(255,255,255,0.1); margin-bottom:1.25rem;"></div>
+
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+      <span style="font-size:12px;">© {{ "now"|date("Y") }} Event Management. All rights reserved.</span>
+      <div class="d-flex gap-3">
+        <a href="#" class="footer-link" style="font-size:12px;">Confidentiality</a>
+        <a href="#" class="footer-link" style="font-size:12px;">Terms of Service</a>
+        <a href="#" class="footer-link" style="font-size:12px;">Cookies</a>
+      </div>
+    </div>
+
+  </div>
+</footer>
+
+<style>
+.footer-link {
+    color: rgba(255,255,255,0.6);
+    text-decoration: none;
+    font-size: 13px;
+    transition: color 0.2s;
+}
+.footer-link:hover { color: white; }
+</style>

@@ -12,6 +12,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -47,9 +48,16 @@ class EventCrudController extends AbstractCrudController
 
         TextField::new('location'),
 
-        TextField::new('category')->hideOnIndex(),
+        AssociationField::new('category')
+            ->setRequired(true)
+            ->setHelp('Select a Category for the Event'),
 
         IntegerField::new('capacity'),
+
+        MoneyField::new('price')
+            ->setNumDecimals(3)
+            ->setCurrency('TND')
+            ->setStoredAsCents(false),
 
         AssociationField::new('organizer')
             ->setRequired(true)

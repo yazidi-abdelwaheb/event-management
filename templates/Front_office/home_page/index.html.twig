@@ -1,5 +1,225 @@
 {% extends 'Front_office/base.html.twig' %}
 
+{% block title %}Home Page — Event Management{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .hero-badge {
+        background: rgba(255,255,255,0.1);
+        color: rgba(255,255,255,0.85);
+        font-size: 12px;
+        font-weight: 600;
+        padding: 6px 16px;
+        border-radius: 20px;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        display: inline-block;
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-hero-primary {
+        background: white;
+        color: #1a1a2e;
+        text-decoration: none;
+        font-size: 15px;
+        font-weight: 700;
+        padding: 14px 32px;
+        border-radius: 10px;
+        transition: opacity 0.2s;
+        display: inline-block;
+    }
+    .btn-hero-primary:hover { opacity: 0.9; color: #1a1a2e; }
+
+    .btn-hero-secondary {
+        background: rgba(255,255,255,0.1);
+        color: white;
+        text-decoration: none;
+        font-size: 15px;
+        font-weight: 600;
+        padding: 14px 32px;
+        border-radius: 10px;
+        border: 1px solid rgba(255,255,255,0.2);
+        transition: background 0.2s;
+        display: inline-block;
+    }
+    .btn-hero-secondary:hover { background: rgba(255,255,255,0.18); color: white; }
+
+    .stat-number {
+        font-size: 28px;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin: 0;
+    }
+    .stat-label {
+        font-size: 13px;
+        color: #6b7280;
+        margin: 4px 0 0;
+    }
+
+   
+    
+   
+
+    .newsletter-input {
+        flex: 1;
+        padding: 12px 16px;
+        border-radius: 8px;
+        border: 1px solid rgba(255,255,255,0.2);
+        background: rgba(255,255,255,0.1);
+        color: white;
+        font-size: 14px;
+        outline: none;
+    }
+    .newsletter-input::placeholder { color: rgba(255,255,255,0.45); }
+    .newsletter-input:focus { border-color: rgba(255,255,255,0.5); }
+
+    .btn-newsletter {
+        background: white;
+        color: #1a1a2e;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: opacity 0.2s;
+    }
+    .btn-newsletter:hover { opacity: 0.9; }
+
+    .section-title {
+        font-size: 26px;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin: 0 0 6px;
+    }
+    .section-subtitle {
+        font-size: 14px;
+        color: #6b7280;
+        margin: 0;
+    }
+
+    .meta-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 4px;
+    }
+    .meta-text {
+        font-size: 12px;
+        color: #6b7280;
+        margin: 0;
+    }
+</style>
+{% endblock %}
+
 {% block body %}
-    <h1>Accueil</h1>
+
+<section style="background:#1a1a2e; padding:5rem 1.5rem; text-align:center;">
+  <div style="max-width:700px; margin:0 auto;">
+    <span class="hero-badge">Event Management Platform</span>
+    <h1 style="color:white; font-size:42px; font-weight:700; line-height:1.2; margin:0 0 1.25rem;">
+      Discover and Book<br>the Best Events
+    </h1>
+    <p style="color:rgba(255,255,255,0.65); font-size:17px; line-height:1.7; margin:0 0 2.5rem;">
+      Concerts, conferences, workshops, parties — find the event that suits you
+        and book your spot in just a few clicks. Join us and never miss out on the excitement!
+    </p>
+    <div class="d-flex gap-3 justify-content-center flex-wrap">
+      <a href="#" class="btn-hero-primary">Explore Events →</a>
+      <a href="#" class="btn-hero-secondary">Learn More</a>
+    </div>
+  </div>
+</section>
+
+<section style="background:white; border-bottom:1px solid #e5e7eb; padding:2rem 1.5rem;">
+  <div class="container">
+    <div class="row text-center g-3">
+      <div class="col-6 col-md-3">
+        <p class="stat-number">500+</p>
+        <p class="stat-label">Events</p>
+      </div>
+      <div class="col-6 col-md-3">
+        <p class="stat-number">12k+</p>
+        <p class="stat-label">Participants</p>
+      </div>
+      <div class="col-6 col-md-3">
+        <p class="stat-number">150+</p>
+        <p class="stat-label">Organizers</p>
+      </div>
+      <div class="col-6 col-md-3">
+        <p class="stat-number">4.9 ★</p>
+        <p class="stat-label">Average Rating</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="padding:4rem 1.5rem; background:#EAF3DE;">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="section-title">Browse by Category</h2>
+        <p class="section-subtitle">Find exactly what you're looking for</p>
+        </div>
+      
+        <a href="{{ path('app_category') }}" style="font-size:14px; font-weight:600; color:#1a1a2e; text-decoration:none;
+                            border:1px solid #e5e7eb; padding:8px 16px; border-radius:8px; background:white;">
+            View All →
+        </a>
+    </div>
+    <div class="row g-3">
+
+        {% for category in categories %}
+           {% include 'Front_office/component/_categoryCard.html.twig' with {'category': category} %}
+        {% endfor %}
+    
+      
+    </div>
+  </div>
+</section>
+
+<section style="padding:1rem 1.5rem 4rem; background:#f8f7f4;">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h2 class="section-title">Events in the Spotlight</h2>
+        <p class="section-subtitle">The most popular events right now</p>
+      </div>
+      <a href="#" style="font-size:14px; font-weight:600; color:#1a1a2e; text-decoration:none;
+                         border:1px solid #e5e7eb; padding:8px 16px; border-radius:8px; background:white;">
+        View All →
+      </a>
+    </div>
+
+    <div class="row g-4">
+
+        {% for event in events %}
+            {% include 'Front_office/component/_eventCard.html.twig' with {'event': event} %}
+        {% endfor %}
+
+    </div>
+  </div>
+</section>
+
+
+<section style="background:#1a1a2e; padding:4rem 1.5rem; text-align:center;">
+  <div style="max-width:520px; margin:0 auto;">
+    <h2 style="color:white; font-size:26px; font-weight:700; margin:0 0 8px;">
+      notify me of the best offers and events
+    </h2>
+    <p style="color:rgba(255,255,255,0.65); font-size:15px; margin:0 0 2rem; line-height:1.6;">
+      Subscribe to our newsletter and receive the best events and exclusive offers directly in your inbox. No spam, just the good stuff!
+    </p>
+    <form class="d-flex gap-2" style="max-width:420px; margin:0 auto;">
+      <input type="email"
+             class="newsletter-input"
+             placeholder="votre@email.com"
+             required>
+      <button type="submit" class="btn-newsletter">Subscribe</button>
+    </form>
+  </div>
+</section>
+
 {% endblock %}

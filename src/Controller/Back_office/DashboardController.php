@@ -67,7 +67,7 @@ class DashboardController extends AbstractDashboardController
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
-            ->setTitle('Event Management');
+            ->setTitle('<b style="color: #4e73df;">Event</b> Management');
             
     }
 
@@ -80,6 +80,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkTo(RoleCrudController::class, 'Roles', 'fas fa-user-tag');
         yield MenuItem::section('Event management');
         yield MenuItem::linkTo(EventCrudController::class, 'Events', 'fas fa-calendar');
+        yield MenuItem::linkTo(CategoryCrudController::class, 'Categories', 'fas fa-tags');
         yield MenuItem::linkToRoute('Calendar', 'fa fa-calendar-alt', 'admin_calendar');
     }
 }

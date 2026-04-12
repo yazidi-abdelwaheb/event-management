@@ -2,41 +2,43 @@
 
 namespace App\Entity;
 
-use App\Repository\RoleRepository;
+use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
 
-#[ORM\Entity(repositoryClass: RoleRepository::class)]
+#[ORM\Entity(repositoryClass: CategoryRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-class Role
+class Category
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 20)]
+    #[ORM\Column(length: 50)]
     private ?string $label = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $created_at = null;
 
-    #[ORM\OneToMany(mappedBy: 'role', targetEntity: User::class)]
-    private Collection $users;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $image = null;
+
+    #[ORM\OneToMany(mappedBy: 'category', targetEntity: Event::class)]
+    private Collection $events;
+
 
     public function __construct()
     {
-        $this->users = new ArrayCollection();
+        $this->events = new ArrayCollection();
     }
-
-    // ✅ ID
+    
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    // ✅ Label
     public function getLabel(): ?string
     {
         return $this->label;
@@ -45,6 +47,7 @@ class Role
     public function setLabel(string $label): static
     {
         $this->label = $label;
+
         return $this;
     }
 
@@ -61,32 +64,37 @@ class Role
         }
     }
 
-    public function getUsers(): Collection
+    public function getImage(): ?string
     {
-        return $this->users;
+        return $this->image;
     }
 
-    public function addUser(User $user): self
+    public function setImage(?string $image): static
     {
-        if (!$this->users->contains($user)) {
-            $this->users->add($user);
-            $user->setRole($this); // sync
-        }
+        $this->image = $image;
+
         return $this;
     }
 
-    public function removeUser(User $user): self
+     public function getEvents(): Collection
     {
-        if ($this->users->removeElement($user)) {
-            if ($user->getRole() === $this) {
-                $user->setRole(null);
-            }
-        }
+        return $this->events;
+    }
+
+    public function setEvents(Collection $events): static
+    {
+        $this->events = $events;
         return $this;
     }
 
+    public function getEventCount(): int
+    {
+        return $this->events->count();
+    }
+
+    
     public function __toString(): string
-    {
-        return $this->label;
-    }
+     {
+         return $this->label ? $this->label : 'Category #' . $this->id;
+     }
 }

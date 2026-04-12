@@ -1,0 +1,32 @@
+
+<style>
+ .category-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 1.5rem;
+        text-align: center;
+        cursor: pointer;
+        text-decoration: none;
+        display: block;
+        transition: border-color 0.4s, transform 0.2s;
+    }
+    .category-card:hover {
+        border-color: #1a1a2e;
+        transform: translateY(-3px);
+    }
+
+   
+</style>
+
+
+<div class="col-6 col-md-3">
+    <a href="#" class="category-card">
+            <div style="width:70px; height:70px; background:#EAF3DE; border-radius:12px;
+                            margin:0 auto 12px; display:flex; align-items:center; justify-content:center;">
+                <image src="{{ asset('uploads/categories/' ~ category.image) }}" width="50" height="50" alt="{{ category.label }} Icon">
+            </div>
+        <p style="font-size:14px; font-weight:600; color:#1a1a2e; margin:0 0 4px;">{{ category.label }}</p>
+        <p style="font-size:12px; color:#6b7280; margin:0;">{{ category.eventCount }} events</p>
+    </a>
+</div>

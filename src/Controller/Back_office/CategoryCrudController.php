@@ -2,27 +2,32 @@
 
 namespace App\Controller\Back_office;
 
-use App\Entity\Role;
+use App\Entity\Category;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
-class RoleCrudController extends AbstractCrudController
+class CategoryCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
     {
-        return Role::class;
+        return Category::class;
     }
 
-    
-    public function configureFields(string $pageName): iterable
+   public function configureFields(string $pageName): iterable
     {
         return [
             IdField::new('id')->hideOnForm(),
+            ImageField::new('image')
+                ->setBasePath('/uploads/categories')
+                ->setUploadDir('public/uploads/categories')
+                ->setUploadedFileNamePattern('[randomhash].[extension]')
+                ->setRequired(false),
             TextField::new('label'),
             DateTimeField::new('created_at')
                 ->hideOnForm(),
@@ -31,15 +36,14 @@ class RoleCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-            ->setEntityLabelInSingular('Role')
-            ->setEntityLabelInPlural('Roles')
-            ->setPageTitle('index', 'Roles management');
+            ->setEntityLabelInSingular('Category')
+            ->setEntityLabelInPlural('Categories')
+            ->setPageTitle('index', 'Categories management');
     }
 
     public function configureActions(Actions $actions): Actions
     {
         return $actions
-            ->add(Crud::PAGE_INDEX, Action::DETAIL)
-            ->remove(Crud::PAGE_INDEX, Action::DELETE);
+            ->add(Crud::PAGE_INDEX, Action::DETAIL);
     }
 }

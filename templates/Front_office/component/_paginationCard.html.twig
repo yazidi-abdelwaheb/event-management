@@ -1,0 +1,51 @@
+
+<style>
+   .pagination-creative .page-link {
+        border: none;
+        background: #f8f9fe;
+        color: #5e72e4;
+        margin: 0 4px;
+        border-radius: 10px !important;
+        font-weight: 500;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        transition: all 0.2s;
+    }
+
+    .pagination-creative .page-item.active .page-link {
+        background: #1a1a2e;
+        color: white;
+        box-shadow: 0 4px 10px rgba(94, 114, 228, 0.3);
+    }
+
+    .pagination-creative .page-link:hover:not(.active) {
+        background: #eeeeee;
+        transform: translateY(-2px);
+    }
+
+</style>
+
+
+<nav aria-label="Page navigation" class="mt-5">
+    <ul class="pagination pagination-creative justify-content-end">
+                
+    <li class="page-item {{ current_page <= 1 ? 'disabled' }}">
+        <a class="page-link" href="{{ path(app.request.attributes.get('_route'), {page: current_page - 1}) }}">
+            <span>&laquo;</span>
+                    </a>
+                </li>
+
+                
+                {% for i in 1..total_pages %}
+                    <li class="page-item {{ i == current_page ? 'active' }}">
+                        <a class="page-link" href="{{ path(app.request.attributes.get('_route'), {page: i}) }}">{{ i }}</a>
+                    </li>
+                {% endfor %}
+
+                
+                <li class="page-item {{ current_page >= total_pages ? 'disabled' }}">
+                    <a class="page-link" href="{{ path(app.request.attributes.get('_route'), {page: current_page + 1}) }}">
+                        <span>&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+</nav>
