@@ -2,6 +2,7 @@
 
 namespace App\Controller\Front_office;
 
+use App\Entity\Category;
 use App\Repository\CategoryRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,13 +41,9 @@ final class CategoryController extends AbstractController
 
 
     #[Route('/category/{id}', name: 'category_show')]
-    public function show(CategoryRepository $categoryRepository, int $id): Response
+    public function show(Category $category): Response
     {
-        $category = $categoryRepository->find($id);
-        if (!$category) {
-            throw $this->createNotFoundException('Category not found');
-        }
-
+        
         return $this->render('front_office/category/show.html.twig', [
             'controller_name' => 'CategoryController',
             'category' => $category,

@@ -10,23 +10,16 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class PublicEventController extends AbstractController
 {
-    #[Route('/public/event', name: 'app_public_event')]
+    #[Route('/event', name: 'app_public_event')]
     public function index(Request $request , EventRepository $eventRepository): Response
     {
         $page = $request->query->getInt('page', 1);
         $limit = 6;
         $offset = ($page - 1) * $limit;
 
-        $queryBuilder = $eventRepository->createQueryBuilder('e')
-            ->select('e.id, e.title, e.image, e.start_date_time, e.location, e.price, c.label as category')
-            ->join('e.category', 'c')
-            ->orderBy('e.created_at', 'DESC');
+       
 
-        $events = (clone $queryBuilder)
-            ->setFirstResult($offset)
-            ->setMaxResults($limit)
-            ->getQuery()
-            ->getResult();
+        $events = $eventRepository->getAllMinContent($offset, $limit);
 
         $totalEvents = count($eventRepository->findAll());
         $totalPages = ceil($totalEvents / $limit);

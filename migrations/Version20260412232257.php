@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20260412201124 extends AbstractMigration
+final class Version20260412232257 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -20,6 +20,7 @@ final class Version20260412201124 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
+        $this->addSql('ALTER TABLE event ADD end_date_time DATETIME DEFAULT NULL');
         $this->addSql('ALTER TABLE event ADD CONSTRAINT FK_3BAE0AA712469DE2 FOREIGN KEY (category_id) REFERENCES category (id)');
         $this->addSql('CREATE INDEX IDX_3BAE0AA712469DE2 ON event (category_id)');
     }
@@ -29,5 +30,6 @@ final class Version20260412201124 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE event DROP FOREIGN KEY FK_3BAE0AA712469DE2');
         $this->addSql('DROP INDEX IDX_3BAE0AA712469DE2 ON event');
+        $this->addSql('ALTER TABLE event DROP end_date_time');
     }
 }

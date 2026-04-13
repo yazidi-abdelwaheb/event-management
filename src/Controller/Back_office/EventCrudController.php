@@ -45,6 +45,10 @@ class EventCrudController extends AbstractCrudController
 
         DateTimeField::new('start_date_time', 'Start Date')
             ->setRequired(true),
+        DateTimeField::new('end_date_time', 'End Date')
+            ->setRequired(true)
+            ->hideOnIndex()
+            ->setHelp('End date must be after start date'),
 
         TextField::new('location'),
 
@@ -78,7 +82,11 @@ class EventCrudController extends AbstractCrudController
         return $crud
             ->setEntityLabelInSingular('Event')
             ->setEntityLabelInPlural('Events')
-            ->setPageTitle('index', 'Events management');
+            ->setPageTitle('index', 'Events management')
+            ->setPaginatorPageSize(5)
+            ->setPaginatorRangeSize(2)
+            ->setPaginatorFetchJoinCollection(true)
+            ->setPaginatorUseOutputWalkers(true);
     }
 
      public function configureActions(Actions $actions): Actions

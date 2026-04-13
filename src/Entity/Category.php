@@ -28,10 +28,13 @@ class Category
     #[ORM\OneToMany(mappedBy: 'category', targetEntity: Event::class)]
     private Collection $events;
 
+    private ?int $eventCount = null;
+
 
     public function __construct()
     {
         $this->events = new ArrayCollection();
+        $this->eventCount = 0;
     }
     
     public function getId(): ?int

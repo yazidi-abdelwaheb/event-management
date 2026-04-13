@@ -23,7 +23,7 @@ final class HomePageController extends AbstractController
             ->getResult();
 
         $events = $eventRepository->createQueryBuilder('e')
-            ->select('e.id, e.title, e.image, e.start_date_time, e.location, e.price, c.label as category')
+            ->select('e.id, e.title, e.image, e.start_date_time,e.end_date_time, e.location, e.price, c.label as category')
             ->join('e.category', 'c')
             ->orderBy('e.created_at', 'DESC')
             ->setMaxResults(6)

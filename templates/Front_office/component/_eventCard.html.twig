@@ -1,21 +1,28 @@
 
 <style>
- .event-card {
+    .event-card {
         background: white;
         border: 1px solid #e5e7eb;
         border-radius: 14px;
         overflow: hidden;
-        transition: transform 0.2s;
+        transition: transform 0.2s, box-shadow 0.2s;
+        display: flex;
+        flex-direction: column;
     }
-    .event-card:hover { transform: translateY(-3px); }
+    .event-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    }
     .event-card.featured { border: 2px solid #1a1a2e; }
 
     .event-thumb {
-        height: 160px;
+        height: 180px;
         display: flex;
         align-items: center;
         justify-content: center;
         position: relative;
+        overflow: hidden;
+        flex-shrink: 0;
     }
 
     .event-badge {
@@ -45,7 +52,6 @@
         bottom: 0;
         left: 0;
         right: 0;
-        background: #1a1a2e;
         color: white;
         font-size: 11px;
         font-weight: 700;
@@ -67,30 +73,102 @@
     }
     .btn-reserve:hover { opacity: 0.85; }
 
+    .meta-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 4px;
+    }
+    .meta-text {
+        font-size: 12px;
+        color: #6b7280;
+        margin: 0;
+    }
+
 
 </style>
 
 
-<div class="col-md-4 ">
-                <div class="event-card">
-                <div class="event-thumb " style="background:#1a1a2e;">
-                    <img src="{{ asset('uploads/events/' ~ event.image) }}" alt="{{ event.title }}" class="img-fluid" style="max-width:100%; max-height:100%; object-fit:cover; border-radius:8px;">
-                    <span class="event-badge" style="background:#EAF3DE; color:#3B6D11;">{{ event.category }}</span>
-                    <span class="event-price {{ event.price == 0 ? 'badge bg-warning fw-bold' : '' }} "> {{ event.price == 0 ? 'Free' : event.price | number_format(2, '.', ' ') ~ " TND" }}</span>
-                </div>
-                <div style="padding:1rem;">
-                    <p style="font-size:15px; font-weight:700; color:#1a1a2e; margin:0 0 8px;">
-                    {{ event.title }}
-                    </p>
-                    <div class="meta-row">
-                    <i class="bi bi-calendar3" style="font-size:12px; color:#9ca3af;"></i>
-                    <span class="meta-text">{{ event.start_date_time|date('D m M Y · H:i') }}</span>
+
+<div class="col-md-4 col-sm-6">
+    <div class="event-card h-100">
+
+        <div class="event-thumb" style="background:#1a1a2e;">
+
+            {% if event.image %}
+                <img src="{{ asset('uploads/events/' ~ event.image) }}"
+                     alt="{{ event.title }}"
+                     style="width:100%; height:100%; object-fit:cover;">
+            {% else %}
+                <i class="bi bi-calendar-event" style="font-size:40px; color:rgba(255,255,255,0.2);"></i>
+            {% endif %}
+
+            <span class="event-badge" style="background:#EAF3DE; color:#3B6D11;">
+                <i class="bi bi-tag me-1" style="font-size:10px;"></i>
+                {{ event.category }}
+            </span>
+
+            {% if event.price == 0 %}
+                <span class="event-price" style="background:#EAF3DE; color:#3B6D11;">
+                    Free
+                </span>
+            {% else %}
+                <span class="event-price">
+                    {{ event.price|number_format(2, '.', ' ') }} TND
+                </span>
+            {% endif %}
+
+            {#
+            {% if event.capacity is defined and event.capacity is not null %}
+                {% set remaining = event.capacity - event.reservations|length %}
+                {% if remaining <= 5 and remaining > 0 %}
+                    <div class="featured-banner" style="background:#dc2626;">
+                        🔥 More than {{ remaining }} place{{ remaining > 1 ? 's' : '' }} !
                     </div>
-                    <div class="meta-row mb-3">
-                    <i class="bi bi-geo-alt" style="font-size:12px; color:#9ca3af;"></i>
-                    <span class="meta-text">{{ event.location }}</span>
+                {% elseif remaining <= 0 %}
+                    <div class="featured-banner" style="background:#6b7280;">
+                        Complete
                     </div>
-                    <a href="#" class="btn-reserve">Reserve</a>
-                </div>
+                {% endif %}
+            {% endif %}#}
+
+        </div>
+
+        
+        <div style="padding:1rem; display:flex; flex-direction:column; flex:1;">
+
+            <p style="font-size:15px; font-weight:700; color:#1a1a2e; margin:0 0 10px; line-height:1.4;">
+                {{ event.title }}
+            </p>
+
+            <div class="meta-row">
+                <i class="bi bi-calendar3" style="font-size:12px; color:#9ca3af;"></i>
+                <span class="meta-text">
+                    Start {{ event.start_date_time|date('D d M Y · H:i') }}
+                </span>
             </div>
+
+            {% if  event.end_date_time %}
+                <div class="meta-row">
+                    <i class="bi bi-clock" style="font-size:12px; color:#9ca3af;"></i>
+                    <span class="meta-text">
+                        Up to {{ event.end_date_time|date('D d M Y · H:i') }}
+                    </span>
+                </div>
+            {% endif %}
+
+            <div class="meta-row mb-3">
+                <i class="bi bi-geo-alt" style="font-size:12px; color:#9ca3af;"></i>
+                <span class="meta-text">{{ event.location }}</span>
+            </div>
+
+            <div class="mt-auto">
+                <a href="{{ path('app_event_show', { id: event.id }) }}" class="btn-reserve">
+                    <i class="bi bi-ticket me-1" style="font-size:12px;"></i>
+                    Subscribe
+                </a>
+            </div>
+
+        </div>
+    </div>
 </div>

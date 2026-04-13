@@ -50,6 +50,11 @@ class Event
     #[ORM\Column]
     private ?float $price = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $end_date_time = null;
+
+    
+
     public function getId(): ?int
     {
         return $this->id;
@@ -80,6 +85,11 @@ class Event
     }
 
     public function getStartDateTime(): ?\DateTime
+    {
+        return $this->start_date_time;
+    }
+
+    public function getStart_date_time(): ?\DateTime
     {
         return $this->start_date_time;
     }
@@ -184,6 +194,22 @@ class Event
     public function setPrice(float $price): static
     {
         $this->price = $price;
+
+        return $this;
+    }
+
+    public function getEndDateTime(): ?\DateTimeImmutable
+    {
+        return $this->end_date_time;
+    }
+    public function getEnd_date_time(): ?\DateTimeImmutable
+    {
+        return $this->end_date_time;
+    }
+
+    public function setEndDateTime(?\DateTimeImmutable $end_date_time): static
+    {
+        $this->end_date_time = $end_date_time;
 
         return $this;
     }

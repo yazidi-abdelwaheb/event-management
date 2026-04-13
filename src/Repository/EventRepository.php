@@ -16,6 +16,19 @@ class EventRepository extends ServiceEntityRepository
         parent::__construct($registry, Event::class);
     }
 
+    public function getAllMinContent(int $limit = 10, int $offset = 0): array
+    {
+        return $this->createQueryBuilder('e')
+            ->select('e.id, e.title, e.image, e.start_date_time, e.end_date_time, e.location, e.price, c.label as category')
+            ->join('e.category', 'c')
+            ->orderBy('e.created_at', 'DESC')
+            ->setFirstResult($offset)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+   
+
     //    /**
     //     * @return Event[] Returns an array of Event objects
     //     */

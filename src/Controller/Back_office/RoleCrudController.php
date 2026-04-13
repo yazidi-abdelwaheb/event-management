@@ -33,7 +33,11 @@ class RoleCrudController extends AbstractCrudController
         return $crud
             ->setEntityLabelInSingular('Role')
             ->setEntityLabelInPlural('Roles')
-            ->setPageTitle('index', 'Roles management');
+            ->setPageTitle('index', 'Roles management')
+            ->setPaginatorPageSize(5)
+            ->setPaginatorRangeSize(2)
+            ->setPaginatorFetchJoinCollection(true)
+            ->setPaginatorUseOutputWalkers(true);
     }
 
     public function configureActions(Actions $actions): Actions
