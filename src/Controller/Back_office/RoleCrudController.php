@@ -8,6 +8,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
@@ -26,6 +27,9 @@ class RoleCrudController extends AbstractCrudController
             TextField::new('label'),
             DateTimeField::new('created_at')
                 ->hideOnForm(),
+            Field::new('users')
+                ->onlyOnDetail()
+                ->setTemplatePath('back_office/roles/users_list.html.twig'),
         ];
     }
     public function configureCrud(Crud $crud): Crud

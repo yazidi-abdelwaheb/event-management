@@ -187,7 +187,7 @@
         <h2 class="section-title">Events in the Spotlight</h2>
         <p class="section-subtitle">The most popular events right now</p>
       </div>
-      <a href="#" style="font-size:14px; font-weight:600; color:#1a1a2e; text-decoration:none;
+      <a href="{{ path('app_public_event') }}" style="font-size:14px; font-weight:600; color:#1a1a2e; text-decoration:none;
                          border:1px solid #e5e7eb; padding:8px 16px; border-radius:8px; background:white;">
         View All →
       </a>
@@ -204,18 +204,38 @@
 </section>
 
 
+<section style="padding:4rem 1.5rem; background:#EAF3DE;">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="section-title">Discover Events on the Calendar</h2>
+        <p class="section-subtitle">See what's coming up next</p>
+        </div>
+      
+        <a href="#" style="font-size:14px; font-weight:600; color:#1a1a2e; text-decoration:none;
+                            border:1px solid #e5e7eb; padding:8px 16px; border-radius:8px; background:white;">
+            View Calendar →
+        </a>
+    </div>
+
+    {% include 'Front_office/component/_calendar.html.twig' with {'events': calendar_events} %}
+    
+  </div>
+</section>
+
+
 <section style="background:#1a1a2e; padding:4rem 1.5rem; text-align:center;">
   <div style="max-width:520px; margin:0 auto;">
-    <h2 style="color:white; font-size:26px; font-weight:700; margin:0 0 8px;">
-      notify me of the best offers and events
+    <h2 class="text-white fw-bold" style="font-size:26px; margin:0 0 8px;">
+      Notify me of the best offers and events
     </h2>
     <p style="color:rgba(255,255,255,0.65); font-size:15px; margin:0 0 2rem; line-height:1.6;">
-      Subscribe to our newsletter and receive the best events and exclusive offers directly in your inbox. No spam, just the good stuff!
+      Subscribe to our <b>newsletter</b> and receive the best events and exclusive offers directly in your inbox. No spam, just the good stuff!
     </p>
     <form class="d-flex gap-2" style="max-width:420px; margin:0 auto;">
       <input type="email"
              class="newsletter-input"
-             placeholder="votre@email.com"
+             placeholder="Foulen@example.com"
              required>
       <button type="submit" class="btn-newsletter">Subscribe</button>
     </form>

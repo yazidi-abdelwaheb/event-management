@@ -1,0 +1,488 @@
+
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.20/index.global.min.css" rel="stylesheet">
+
+<style>
+.calendar-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.cal-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 1.5rem;
+}
+
+.stat-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+}
+
+.stat-label {
+    font-size: 12px;
+    color: #6b7280;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+.stat-value {
+    font-size: 26px;
+    font-weight: 700;
+    color: #1a1a2e;
+}
+
+.cal-wrapper {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 1.5rem;
+}
+
+/* FullCalendar overrides */
+.fc { font-family: 'Segoe UI', sans-serif; font-size: 13px; }
+.fc-toolbar-title { font-size: 18px !important; font-weight: 700; color: #1a1a2e; }
+
+.fc-button-primary {
+    background-color: #1a1a2e !important;
+    border-color: #1a1a2e !important;
+    border-radius: 8px !important;
+    font-size: 13px !important;
+    padding: 6px 14px !important;
+    transition: opacity .15s;
+}
+.fc-button-primary:hover { opacity: 0.85 !important; }
+.fc-button-primary:not(.fc-button-active):not(.fc-prev-button):not(.fc-next-button):not(.fc-today-button) {
+    background-color: #f3f4f6 !important;
+    border-color: #e5e7eb !important;
+    color: #374151 !important;
+}
+.fc-button-active { background-color: #1a1a2e !important; opacity: 0.75; }
+
+.fc-daygrid-day-number {
+    font-size: 13px;
+    color: #374151;
+    padding: 4px 6px;
+    text-decoration: none !important;
+}
+.fc-day-today { background: #f0f4ff !important; }
+.fc-day-today .fc-daygrid-day-number {
+    background: #1a1a2e;
+    color: #fff;
+    border-radius: 50%;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+}
+.fc-event {
+    border-radius: 6px !important;
+    font-size: 11px;
+    padding: 2px 6px;
+    border: none !important;
+    cursor: pointer;
+    font-weight: 600;
+}
+.fc-col-header-cell-cushion {
+    font-size: 11px;
+    font-weight: 700;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    text-decoration: none !important;
+}
+
+/* Modal */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.5);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.modal-box {
+    background: white;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 440px;
+    overflow: hidden;
+    animation: modalIn 0.25s ease;
+}
+
+@keyframes modalIn {
+    from { transform: scale(0.95); opacity: 0; }
+    to   { transform: scale(1);    opacity: 1; }
+}
+
+.modal-top-bar {
+    height: 5px;
+    background: #1a1a2e;
+}
+
+.modal-header {
+    padding: 1.25rem 1.5rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.modal-icon {
+    width: 44px;
+    height: 44px;
+    background: #1a1a2e;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.modal-close-btn {
+    background: #f3f4f6;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 13px;
+    cursor: pointer;
+    color: #374151;
+    flex-shrink: 0;
+    transition: background 0.2s;
+}
+.modal-close-btn:hover { background: #e5e7eb; }
+
+.modal-info-grid {
+    background: #f8f7f4;
+    border-radius: 10px;
+    padding: 1rem;
+    margin: 1rem 1.5rem;
+}
+
+.modal-info-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+.modal-info-row:last-child { margin-bottom: 0; }
+
+.modal-info-icon {
+    width: 32px;
+    height: 32px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.modal-info-label {
+    font-size: 11px;
+    color: #9ca3af;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.modal-info-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1a1a2e;
+    margin: 0;
+}
+
+.modal-desc-section {
+    padding: 0 1.5rem;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.modal-desc-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #374151;
+    margin: 0 0 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.modal-desc-text {
+    font-size: 13px;
+    color: #6b7280;
+    line-height: 1.7;
+    margin: 0;
+}
+
+.modal-footer {
+    padding: 1rem 1.5rem 1.5rem;
+    display: flex;
+    gap: 8px;
+}
+
+.modal-btn-close {
+    flex: 1;
+    padding: 10px;
+    background: #f3f4f6;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.modal-btn-close:hover { background: #e5e7eb; }
+
+.modal-btn-reserve {
+    flex: 2;
+    padding: 10px;
+    background: #1a1a2e;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: white;
+    text-decoration: none;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: opacity 0.2s;
+}
+.modal-btn-reserve:hover { opacity: 0.85; color: white; }
+
+@media (max-width: 640px) {
+    .cal-stats { grid-template-columns: repeat(2, 1fr); }
+    .cal-wrapper { padding: 1rem; }
+}
+</style>
+
+<div class="calendar-page">
+  <div class="cal-stats">
+    <div class="stat-card">
+      <p class="stat-label">Total events</p>
+      <p class="stat-value">{{ events|length }}</p>
+    </div>
+    <div class="stat-card">
+      <p class="stat-label">Free</p>
+      <p class="stat-value">
+        {{ events|filter(e => e.price == 0)|length }}
+      </p>
+    </div>
+    <div class="stat-card">
+      <p class="stat-label">This month</p>
+      <p class="stat-value">
+        {{ events|filter(e => e.startDateTime|date('Y-m') == 'now'|date('Y-m'))|length }}
+      </p>
+    </div>
+    <div class="stat-card">
+      <p class="stat-label">Categories</p>
+      <p class="stat-value">
+        {{ events|map(e => e.category)|length }}
+      </p>
+    </div>
+  </div>
+
+  <div class="cal-wrapper">
+    <div id="calendar"></div>
+  </div>
+</div>
+
+<div id="event-modal" class="modal-overlay" style="display:none;">
+  <div class="modal-box">
+
+    <div class="modal-top-bar" id="modal-top-bar"></div>
+
+    <div class="modal-header">
+      <div style="display:flex; align-items:center; gap:10px; flex:1; min-width:0;">
+        <div class="modal-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <div style="min-width:0;">
+          <p id="modal-title" style="font-size:16px; font-weight:700; color:#1a1a2e; margin:0 0 4px; line-height:1.3;"></p>
+          <span id="modal-category" style="background:#EAF3DE; color:#3B6D11; font-size:11px; font-weight:700; padding:2px 8px; border-radius:4px;"></span>
+        </div>
+      </div>
+      <button class="modal-close-btn" onclick="closeModal()">✕</button>
+    </div>
+
+    <div class="modal-info-grid">
+      <div class="modal-info-row">
+        <div class="modal-info-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <div>
+          <p class="modal-info-label">Start</p>
+          <p class="modal-info-value" id="modal-start"></p>
+        </div>
+      </div>
+      <div class="modal-info-row" id="modal-end-row">
+        <div class="modal-info-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div>
+          <p class="modal-info-label">End</p>
+          <p class="modal-info-value" id="modal-end"></p>
+        </div>
+      </div>
+      <div class="modal-info-row" id="modal-loc-row">
+        <div class="modal-info-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <div>
+          <p class="modal-info-label">Location</p>
+          <p class="modal-info-value" id="modal-loc"></p>
+        </div>
+      </div>
+      <div class="modal-info-row">
+        <div class="modal-info-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <div>
+          <p class="modal-info-label">Price</p>
+          <p class="modal-info-value" id="modal-price"></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-desc-section">
+      <p class="modal-desc-title">Description</p>
+      <p class="modal-desc-text" id="modal-desc"></p>
+    </div>
+
+    <div class="modal-footer">
+      <button class="modal-btn-close" onclick="closeModal()">Close</button>
+      <a id="modal-reserve-btn" href="#" class="modal-btn-reserve">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/></svg>
+        Subscribe
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.20/index.global.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const palette = [
+        '#1a1a2e','#534AB7','#3B6D11','#854F0B',
+        '#993C1D','#0F6E56','#993556','#185FA5'
+    ];
+
+    const catColors = {};
+    let colorIdx = 0;
+
+    const events = [
+        {% for event in events %}
+        {
+            id:          {{ event.id }},
+            title:       {{ event.title|json_encode|raw }},
+            start:       "{{ event.startDateTime|date('Y-m-d\\TH:i:s') }}",
+            end:         "{{ event.endDateTime is not null ? event.endDateTime|date('Y-m-d\\TH:i:s') : '' }}",
+            description: {{ event.description|default('')|json_encode|raw }},
+            location:    {{ event.location|json_encode|raw }},
+            price:       {{ event.price }},
+            category:    {{ event.category|json_encode|raw }},
+            image:       {{ event.image|default('')|json_encode|raw }},
+        },
+        {% endfor %}
+    ];
+
+    events.forEach(e => {
+        if (!catColors[e.category]) {
+            catColors[e.category] = palette[colorIdx % palette.length];
+            colorIdx++;
+        }
+    });
+
+    const cal = new FullCalendar.Calendar(document.getElementById('calendar'), {
+        initialView: 'dayGridMonth',
+        height: 'auto',
+        expandRows: true,
+        navLinks: false,
+        editable: false,
+        selectable: false,
+        locale: 'fr',
+        headerToolbar: {
+            left:   'prev,next today',
+            center: 'title',
+            right:  'dayGridMonth,timeGridWeek,listWeek'
+        },
+        events: events.map(e => ({
+            id:    e.id,
+            title: e.title,
+            start: e.start,
+            end:   e.end || undefined,
+            backgroundColor: catColors[e.category],
+            textColor: '#ffffff',
+            extendedProps: {
+                description: e.description,
+                location:    e.location,
+                price:       e.price,
+                category:    e.category,
+                image:       e.image,
+            }
+        })),
+
+        eventClick: function (info) {
+            const ev = info.event;
+            const p  = ev.extendedProps;
+
+            const fmt = dt => dt
+                ? dt.toLocaleDateString('fr-FR', {
+                    weekday: 'long', day: 'numeric',
+                    month: 'long', year: 'numeric'
+                  }) + ' · ' + dt.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'})
+                : '';
+
+            document.getElementById('modal-title').textContent    = ev.title;
+            document.getElementById('modal-category').textContent = p.category;
+            document.getElementById('modal-start').textContent    = fmt(ev.start);
+            document.getElementById('modal-end').textContent      = ev.end ? fmt(ev.end) : '';
+            document.getElementById('modal-end-row').style.display = ev.end ? 'flex' : 'none';
+            document.getElementById('modal-loc').textContent      = p.location || '';
+            document.getElementById('modal-loc-row').style.display = p.location ? 'flex' : 'none';
+            document.getElementById('modal-price').textContent    = p.price == 0 ? 'Gratuit' : p.price + ' TND';
+            document.getElementById('modal-price').style.color    = p.price == 0 ? '#3B6D11' : '#1a1a2e';
+            document.getElementById('modal-desc').textContent     = p.description || 'Aucune description.';
+            document.getElementById('modal-top-bar').style.background = catColors[p.category] || '#1a1a2e';
+
+            const reserveBtn = document.getElementById('modal-reserve-btn');
+            reserveBtn.href = '/event/' + ev.id;
+            reserveBtn.style.background = catColors[p.category] || '#1a1a2e';
+
+            document.getElementById('event-modal').style.display = 'flex';
+        }
+    });
+
+    cal.render();
+
+    window.closeModal = function () {
+        document.getElementById('event-modal').style.display = 'none';
+    };
+
+    document.getElementById('event-modal').addEventListener('click', function (e) {
+        if (e.target === this) closeModal();
+    });
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') closeModal();
+    });
+});
+</script>

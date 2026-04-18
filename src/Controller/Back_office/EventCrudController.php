@@ -6,9 +6,11 @@ use App\Entity\Event;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
@@ -16,6 +18,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 
 class EventCrudController extends AbstractCrudController
 {
@@ -58,6 +61,10 @@ class EventCrudController extends AbstractCrudController
 
         IntegerField::new('capacity'),
 
+        Field::new('subscribedCount')
+            ->setLabel('Subscribed')
+            ->hideOnForm(),
+
         MoneyField::new('price')
             ->setNumDecimals(3)
             ->setCurrency('TND')
@@ -72,6 +79,10 @@ class EventCrudController extends AbstractCrudController
 
         DateTimeField::new('updated_at')
             ->hideOnForm()->hideOnIndex(),
+
+        AssociationField::new('eventSubscribes')
+            ->onlyOnDetail()
+            ->setTemplatePath('back_office/events/event_subscribes/event_subscribes_list.html.twig'),
     ];
 }
     
@@ -91,7 +102,20 @@ class EventCrudController extends AbstractCrudController
 
      public function configureActions(Actions $actions): Actions
     {
+        
         return $actions
             ->add(Crud::PAGE_INDEX, Action::DETAIL);
+            
+    }
+
+     public function configureFilters(Filters $filters): Filters
+    {
+        return $filters
+            ->add('start_date_time')
+            ->add('end_date_time')
+            ->add('category')
+            ->add('capacity')
+            ->add('price')
+            ->add('organizer');
     }
 }

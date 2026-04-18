@@ -81,6 +81,8 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::section('Event management');
         yield MenuItem::linkTo(EventCrudController::class, 'Events', 'fas fa-calendar');
         yield MenuItem::linkTo(CategoryCrudController::class, 'Categories', 'fas fa-tags');
+        yield MenuItem::linkTo(EventSubscribeCrudController::class, 'Subscriptions', 'fa-solid fa-user-plus');
         yield MenuItem::linkToRoute('Calendar', 'fa fa-calendar-alt', 'admin_calendar');
+        
     }
 }

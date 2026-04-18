@@ -16,6 +16,19 @@ class CategoryRepository extends ServiceEntityRepository
         parent::__construct($registry, Category::class);
     }
 
+
+    public function findAllMinContentPaginated(int $limit = 10, int $offset = 0): array
+    {
+        return $this->createQueryBuilder('c')
+            ->select('c.id, c.label, c.image, COUNT(e.id) as eventCount')
+            ->leftJoin('c.events', 'e')
+            ->groupBy('c.id')
+            ->setFirstResult($offset)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return Category[] Returns an array of Category objects
     //     */

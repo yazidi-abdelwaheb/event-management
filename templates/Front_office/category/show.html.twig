@@ -6,74 +6,9 @@
 
 
 <style>
-    .event-card {
-        background: white;
-        border: 1px solid #e5e7eb;
-        border-radius: 14px;
-        overflow: hidden;
-        transition: transform 0.2s;
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-    }
-    .event-card:hover { transform: translateY(-3px); }
-
-    .event-thumb {
-        height: 180px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        overflow: hidden;
-        flex-shrink: 0;
-    }
-
-    .event-badge {
-        position: absolute;
-        top: 12px;
-        left: 12px;
-        font-size: 11px;
-        font-weight: 700;
-        padding: 4px 10px;
-        border-radius: 6px;
-    }
-
-    .event-price {
-        position: absolute;
-        top: 12px;
-        right: 12px;
-        background: white;
-        color: #1a1a2e;
-        font-size: 12px;
-        font-weight: 700;
-        padding: 4px 10px;
-        border-radius: 6px;
-    }
-
-    .featured-banner {
-        position: absolute;
-        bottom: 0; left: 0; right: 0;
-        background: #1a1a2e;
-        color: white;
-        font-size: 11px;
-        font-weight: 700;
-        text-align: center;
-        padding: 5px;
-    }
-
-    .btn-reserve {
-        display: block;
-        text-align: center;
-        background: #1a1a2e;
-        color: white !important;
-        text-decoration: none;
-        font-size: 13px;
-        font-weight: 600;
-        padding: 9px;
-        border-radius: 8px;
-        transition: opacity 0.2s;
-    }
-    .btn-reserve:hover { opacity: 0.85; }
+    
+   
+   
 
     .meta-row {
         display: flex;
@@ -162,20 +97,6 @@
 
     <div class="container" style="position:relative; z-index:1;">
 
-        <nav aria-label="breadcrumb" class="mb-3">
-            <ol class="breadcrumb" style="background:none; padding:0; margin:0;">
-                <li class="breadcrumb-item">
-                    <a href="{{ path('app_home_page') }}">
-                        <i class="bi bi-house me-1" style="font-size:12px;"></i>Accueil
-                    </a>
-                </li>
-                <li class="breadcrumb-item">
-                    <a href="#">Catégories</a>
-                </li>
-                <li class="breadcrumb-item active">{{ category.label }}</li>
-            </ol>
-        </nav>
-
         <div class="d-flex align-items-center gap-4 flex-wrap">
 
             <div style="width:80px; height:80px; border-radius:16px; background:rgba(255,255,255,0.15);
@@ -213,10 +134,10 @@
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
       <div>
         <h2 style="font-size:20px; font-weight:700; color:#1a1a2e; margin:0 0 4px;">
-          Événements dans "{{ category.label }}"
+          Events in "{{ category.label }}"
         </h2>
         <p style="font-size:13px; color:#6b7280; margin:0;">
-          {{ category.events|length }} résultat{{ category.events|length > 1 ? 's' : '' }} trouvé{{ category.events|length > 1 ? 's' : '' }}
+          {{ category.events|length }} result{{ category.events|length > 1 ? 's' : '' }} found
         </p>
       </div>
 
@@ -228,7 +149,7 @@
           <i class="bi bi-tag me-1" style="font-size:11px;"></i>Par prix
         </a>
         <a href="?sort=free" class="filter-btn {{ app.request.query.get('sort') == 'free' ? 'active' : '' }}">
-          <i class="bi bi-gift me-1" style="font-size:11px;"></i>Gratuits
+          <i class="bi bi-gift me-1" style="font-size:11px;"></i>Free
         </a>
       </div>
     </div>
@@ -248,15 +169,15 @@
                 <i class="bi bi-calendar-x" style="font-size:36px; color:#9ca3af;"></i>
             </div>
             <h3 style="font-size:18px; font-weight:600; color:#374151; margin:0 0 8px;">
-                Aucun événement disponible
+                No events available
             </h3>
             <p style="font-size:14px; color:#6b7280; margin:0 0 1.5rem;">
-                Il n'y a pas encore d'événements dans la catégorie "{{ category.label }}".
+                There are no events in the category "{{ category.label }}".
             </p>
-            <a href="{{ path('app_home_page') }}"
+            <a href="{{ path('app_category') }}"
                style="background:#1a1a2e; color:white; text-decoration:none; font-size:14px;
                       font-weight:600; padding:10px 24px; border-radius:8px; display:inline-block;">
-                Voir toutes les catégories
+                View all categories
             </a>
         </div>
     {% endif %}

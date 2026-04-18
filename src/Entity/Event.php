@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\EventRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -52,6 +54,19 @@ class Event
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $end_date_time = null;
+
+    /**
+     * @var Collection<int, EventSubscribe>
+     */
+    #[ORM\OneToMany(targetEntity: EventSubscribe::class, mappedBy: 'event', orphanRemoval: true)]
+    private Collection $eventSubscribes;
+
+    
+
+    public function __construct()
+    {
+        $this->eventSubscribes = new ArrayCollection();
+    }
 
     
 
@@ -212,5 +227,45 @@ class Event
         $this->end_date_time = $end_date_time;
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, EventSubscribe>
+     */
+    public function getEventSubscribes(): Collection
+    {
+        return $this->eventSubscribes;
+    }
+
+    public function addEventSubscribe(EventSubscribe $eventSubscribe): static
+    {
+        if (!$this->eventSubscribes->contains($eventSubscribe)) {
+            $this->eventSubscribes->add($eventSubscribe);
+            $eventSubscribe->setEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEventSubscribe(EventSubscribe $eventSubscribe): static
+    {
+        if ($this->eventSubscribes->removeElement($eventSubscribe)) {
+            // set the owning side to null (unless already changed)
+            if ($eventSubscribe->getEvent() === $this) {
+                $eventSubscribe->setEvent(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getSubscribedCount(): ?int
+    {
+        return $this->eventSubscribes->count();
+    }
+
+    public function __tostring(): string
+    {
+        return $this->title;
     }
 }

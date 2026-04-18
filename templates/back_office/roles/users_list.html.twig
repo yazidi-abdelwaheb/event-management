@@ -1,0 +1,46 @@
+
+
+
+<br>
+
+    <div class="event-subscribes-list">
+        <h1>Users in this role</h1>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Avatar</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in field.value %} 
+                 
+                    <tr onclick="window.location='{{ ea_url().setController('App\\Controller\\Back_office\\UserCrudController').setAction('detail').setEntityId(user.id) }}'" style="cursor: pointer;">
+                        <td>{{ user.id }}</td>
+                        <td>
+                            {% if user.avatar %}
+                                <img src="{{ asset('uploads/avatars/' ~ user.avatar) }}" alt="Avatar" style="width:40px; height:40px; border-radius:50%;">
+                            {% else %}
+                                <i class="fa fa-user-circle" style="font-size:40px; color:rgba(0,0,0,0.2);"></i>
+                            {% endif %}
+                        </td>
+                        <td>{{ user.firstName }}</td>
+                        <td>{{ user.lastName }}</td>
+                        <td>{{ user.email }}</td>
+                    </tr>
+                
+                {% else %}
+                    <tr><td colspan="5" class="text-center">No User found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+   
+
+
+
+

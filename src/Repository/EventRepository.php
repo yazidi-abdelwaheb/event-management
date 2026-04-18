@@ -16,7 +16,7 @@ class EventRepository extends ServiceEntityRepository
         parent::__construct($registry, Event::class);
     }
 
-    public function getAllMinContent(int $limit = 10, int $offset = 0): array
+    public function findAllMinContentPaginated(int $limit = 10, int $offset = 0): array
     {
         return $this->createQueryBuilder('e')
             ->select('e.id, e.title, e.image, e.start_date_time, e.end_date_time, e.location, e.price, c.label as category')
@@ -27,7 +27,26 @@ class EventRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
-   
+
+    public function findOneMinContent(int $id): ?array
+    {
+        return $this->createQueryBuilder('e')
+            ->select('e.id, e.title, e.image, e.start_date_time, e.end_date_time, e.location, e.price, c.label as category')
+            ->join('e.category', 'c')
+            ->where('e.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+     public function findAllForCalendar(): array
+    {
+        return $this->createQueryBuilder('e')
+            ->select('e.id, e.title, e.description, e.image, e.start_date_time as startDateTime, e.end_date_time as endDateTime, e.location, e.price, c.label as category')
+            ->join('e.category', 'c')
+            ->getQuery()
+            ->getResult();
+    }
 
     //    /**
     //     * @return Event[] Returns an array of Event objects

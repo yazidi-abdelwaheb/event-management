@@ -1,0 +1,32 @@
+
+
+
+<br>
+
+    <div class="event-subscribes-list">
+        <h1>People Subscriptions</h1>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Subscribed At</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for subscribe in field.value %} 
+                    <tr onclick="window.location='{{ ea_url().setController('App\\Controller\\Back_office\\EventSubscribeCrudController').setAction('detail').setEntityId(subscribe.id) }}'" style="cursor: pointer;">
+                        <td>{{ subscribe.id }}</td>
+                        <td>{{ subscribe.fullName }}</td>
+                        <td>{{ subscribe.email }}</td>
+                        <td>{{ subscribe.created_at|date('Y-m-d H:i') }}</td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="5" class="text-center">No subscriptions found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+

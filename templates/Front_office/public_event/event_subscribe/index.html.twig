@@ -1,0 +1,255 @@
+{% extends 'Front_office/base.html.twig' %}
+
+{% block body %}
+<div class="registration-page" style="background-color: #f8f9fa; min-height: 100vh; padding-bottom: 50px;">
+    
+   <!-- Creative Event Hero Header -->
+<div class="event-hero-creative mb-5 position-relative overflow-hidden" 
+     style="background: linear-gradient(rgba(26, 26, 46, 0.50), rgba(26, 26, 46, 0.70)), 
+            url('{{ asset('uploads/events/' ~ event.image) }}') center/cover no-repeat; 
+            padding: 100px 0 120px 0;">
+    
+    <!-- Éléments décoratifs (cercles abstraits) -->
+    <div class="shape-1"></div>
+    <div class="shape-2"></div>
+
+    <div class="container position-relative">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <!-- Category Badge with Glass Effect -->
+                <div class="category-badge mb-3">
+                    <span class="badge-icon"><i class="bi bi-tag-fill"></i></span>
+                    <span class="category-name text-uppercase">{{ event.category }}</span>
+                </div>
+
+                <h1 class="display-3 fw-black text-white mb-4 animate-slide-up">
+                    {{ event.title }}
+                </h1>
+
+                <!-- Info Cards Grid -->
+                <div class="d-flex flex-wrap gap-3 animate-fade-in">
+                    <div class="info-glass-card">
+                        <div class="icon-box"><i class="bi bi-calendar3"></i></div>
+                        <div>
+                            <small class="d-block text-white-50">DATE & TIME</small>
+                            <span class="fw-bold">{{ event.start_date_time|date('d M Y') }} • {{ event.start_date_time|date('H:i') }}</span>
+                        </div>
+                    </div>
+
+                    <div class="info-glass-card">
+                        <div class="icon-box"><i class="bi bi-geo-alt"></i></div>
+                        <div>
+                            <small class="d-block text-white-50">LOCATION</small>
+                            <span class="fw-bold text-truncate" style="max-width: 150px; display: inline-block;">{{ event.location }}</span>
+                        </div>
+                    </div>
+
+                    <div class="info-glass-card">
+                        <div class="icon-box"><i class="bi bi-lightning-charge"></i></div>
+                        <div>
+                            <small class="d-block text-white-50">STATUS</small>
+                            <span class="fw-bold text-warning">Limited Spots</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <div class="container mt-4">
+        <div class="row">
+            <!-- Left Column: Registration Form -->
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm p-4 mb-4" style="border-radius: 16px;">
+                    <div class="d-flex align-items-center mb-4">
+                        
+                        <h2 class="h4 m-0 fw-bold">Participant Information</h2>
+                    </div>
+                    
+                    {{ form_start(form, {'attr': {'id': 'event_sub_form'}}) }}
+                        
+                            <div class=" mb-4">
+                                <label class="form-label fw-bold text-dark small mb-2">FULL NAME</label>
+                                <div class="input-group custom-input-group">
+                                    <span class="input-group-text border-0 bg-light"><i class="bi bi-person"></i></span>
+                                    {{ form_widget(form.full_name, {'attr': {'class': 'form-control border-0 bg-light', 'placeholder': 'Enter your full name'}}) }}
+                                </div>
+                                <div class="text-danger small mt-1">
+                                    {{ form_errors(form.full_name) }}
+                                </div>
+                                
+                            </div>
+
+                            <div class=" mb-4">
+                                <label class="form-label fw-bold text-dark small mb-2">EMAIL ADDRESS</label>
+                                <div class="input-group custom-input-group">
+                                    <span class="input-group-text border-0 bg-light"><i class="bi bi-envelope"></i></span>
+                                    {{ form_widget(form.email, {'attr': {'class': 'form-control border-0 bg-light', 'placeholder': 'name@example.com'}}) }}
+                                </div>
+                                <div class="text-danger small mt-1">
+                                    {{ form_errors(form.email) }}
+                                </div>
+                                
+                            </div>
+
+                            <div class=" mb-4">
+                                <label class="form-label fw-bold text-dark small mb-2">PHONE NUMBER</label>
+                                <div class="input-group custom-input-group">
+                                    <span class="input-group-text border-0 bg-light"><i class="bi bi-telephone"></i></span>
+                                    {{ form_widget(form.phone, {'attr': {'class': 'form-control border-0 bg-light', 'placeholder': 'Your mobile number'}}) }}
+                                </div>
+                                <div class="text-danger small mt-1">
+                                    {{ form_errors(form.phone) }}
+                                </div>
+                            </div>
+                        
+                    {{ form_end(form) }}
+                </div>
+            </div>
+
+            <!-- Right Column: Pricing & Meta -->
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm sticky-top" style="border-radius: 16px; top: 20px;">
+                    <div class="card-body p-4">
+                        <div class="text-center mb-4">
+                            <span class="text-muted small d-block mb-1">Total Amount</span>
+                            <h2 class="fw-black" style="color: #1a1a2e; font-size: 2.5rem;">{{ event.price }} <small class="fs-6">TND</small></h2>
+                        </div>
+
+                        <ul class="list-unstyled mb-4">
+                            <li class="d-flex justify-content-between mb-2 pb-2 border-bottom">
+                                <span class="text-muted"><i class="bi bi-ticket-perforated me-2"></i>Access</span>
+                                <span class="fw-bold">Full Event</span>
+                            </li>
+                            <li class="d-flex justify-content-between mb-2">
+                                <span class="text-muted"><i class="bi bi-people me-2"></i>Availability</span>
+                                <span class="text-success fw-bold">Seats Available</span>
+                            </li>
+                        </ul>
+
+                        <button type="submit" form="event_sub_form" class="btn btn-dark w-100 py-3 fw-bold shadow-sm" style="border-radius: 12px; background-color: #1a1a2e;">
+                            COMPLETE REGISTRATION <i class="bi bi-arrow-right ms-2"></i>
+                        </button>
+                        
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+ 
+
+ /* Category Badge Style */
+    .category-badge {
+        display: inline-flex;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        padding: 5px 15px 5px 5px;
+        border-radius: 50px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .badge-icon {
+        background: #4e73df; /* Ta couleur primaire */
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+    .category-name {
+        color: white;
+        font-size: 0.85rem;
+        font-weight: 600;
+        letter-spacing: 1px;
+    }
+
+
+    .info-glass-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 15px 25px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        color: white;
+        transition: transform 0.3s ease;
+    }
+    .info-glass-card:hover {
+        transform: translateY(-5px);
+        background: rgba(255, 255, 255, 0.1);
+    }
+    .icon-box {
+        font-size: 1.5rem;
+        color: #4e73df;
+    }
+
+    /* Decorative Shapes */
+    .shape-1, .shape-2 {
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(78, 115, 223, 0.2) 0%, transparent 70%);
+        border-radius: 50%;
+        z-index: 0;
+    }
+    .shape-1 { top: -100px; right: -50px; }
+    .shape-2 { bottom: -150px; left: -50px; }
+
+    
+    .animate-slide-up {
+        animation: slideUp 0.8s ease forwards;
+    }
+    .animate-fade-in {
+        animation: fadeIn 1.2s ease forwards;
+    }
+
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    /* Styling to match your layout exactly */
+    .fw-black { font-weight: 900; }
+    .mt-n4 { margin-top: -40px; }
+    
+    .custom-input-group {
+        border: 2px solid transparent;
+        border-radius: 10px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .custom-input-group:focus-within {
+        border-color: #1a1a2e;
+        box-shadow: 0 0 0 0.25rem rgba(26, 26, 46, 0.1);
+    }
+
+    .form-control:focus {
+        box-shadow: none;
+        background-color: #fff !important;
+    }
+
+    .input-group-text i {
+        color: #adb5bd;
+    }
+
+    /* Professional Button Animation */
+    .btn-dark:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 15px rgba(0,0,0,0.1) !important;
+    }
+</style>
+{% endblock %}

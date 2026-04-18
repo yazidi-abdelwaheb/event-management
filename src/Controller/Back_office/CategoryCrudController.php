@@ -6,6 +6,7 @@ use App\Entity\Category;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
@@ -33,6 +34,9 @@ class CategoryCrudController extends AbstractCrudController
             Field::new('eventCount')->hideOnForm(),
             DateTimeField::new('created_at')
                 ->hideOnForm(),
+            Field::new('events')
+                ->onlyOnDetail()
+                ->setTemplatePath('back_office/categories/events_list.html.twig'),
         ];
     }
     public function configureCrud(Crud $crud): Crud
@@ -52,4 +56,6 @@ class CategoryCrudController extends AbstractCrudController
         return $actions
             ->add(Crud::PAGE_INDEX, Action::DETAIL);
     }
+
+    
 }

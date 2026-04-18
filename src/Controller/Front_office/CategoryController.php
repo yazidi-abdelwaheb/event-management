@@ -14,23 +14,16 @@ final class CategoryController extends AbstractController
     #[Route('/category', name: 'app_category')]
     public function index(CategoryRepository $categoryRepository, Request $request): Response
     {
-        $page = $request->query->getInt('page', 1);
+        $page  = max(1, $request->query->getInt('page', 1));
         $limit = 8;
         $offset = ($page - 1) * $limit;
 
-        $queryBuilder = $categoryRepository->createQueryBuilder('c')
-            ->select('c.id, c.label, c.image, COUNT(e.id) as eventCount')
-            ->leftJoin('c.events', 'e')
-            ->groupBy('c.id');
+        
 
-        $categories = (clone $queryBuilder)
-            ->setFirstResult($offset)
-            ->setMaxResults($limit)
-            ->getQuery()
-            ->getResult();
+        $categories = $categoryRepository->findAllMinContentPaginated($limit, $offset);
 
-        $totalCategories = count($categoryRepository->findAll());
-        $totalPages = ceil($totalCategories / $limit);
+        $totalCategories = $categoryRepository->count([]);
+        $totalPages  = (int) ceil($totalCategories / $limit);
 
         return $this->render('front_office/category/index.html.twig', [
             'categories' => $categories,

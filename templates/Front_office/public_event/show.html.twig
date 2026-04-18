@@ -1,0 +1,282 @@
+{% extends 'Front_office/base.html.twig' %}
+
+{% block title %}{{ event.title }} — Event Management{% endblock %}
+{% block body %}
+
+<style>
+.category-badge {
+    background: rgba(234,243,222,0.8);
+    color: #003;
+    backdrop-filter: blur(8px);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+}
+
+
+.card-custom {
+    background: #fff;
+    border-radius: 18px;
+    border: 1px solid #eee;
+    padding: 25px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.card-custom:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+}
+
+.card-custom p {
+    line-height: 1.7;
+    color: #555;
+}
+
+
+.info-box {
+    background: #f9faff;
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 15px;
+    transition: 0.2s;
+}
+
+.info-box:hover {
+    background: #eef2ff;
+    transform: scale(1.02);
+}
+
+.booking-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 25px;
+    border: 1px solid #eee;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+    transition: 0.3s;
+}
+
+.booking-card:hover {
+    transform: translateY(-5px);
+}
+
+.btn-dark {
+    background: linear-gradient(135deg, #1e1e3f, #2b2b5f);
+    border-radius: 12px;
+    padding: 12px;
+    font-weight: 500;
+    border: none;
+    transition: 0.3s;
+}
+
+.btn-dark:hover {
+    transform: scale(1.03);
+    box-shadow: 0 8px 20px rgba(43,43,95,0.4);
+}
+
+
+.text-muted {
+    color: #777 !important;
+}
+
+/* MODAL BACKGROUND */
+.image-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    backdrop-filter: blur(12px);
+    background: rgba(0,0,0,0.6);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.3s;
+    z-index: 9999;
+}
+
+/* ACTIVE */
+.image-modal.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* IMAGE */
+.image-modal img {
+    width: 80%;
+    max-height: 80%;
+    object-fit: contain;
+
+    border-radius: 16px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+
+    transform: scale(0.8);
+    transition: 0.3s;
+}
+
+.image-modal.active img {
+    transform: scale(1);
+}
+
+/* CLOSE BUTTON */
+.close-btn {
+    position: absolute;
+    top: 30px;
+    right: 40px;
+    font-size: 40px;
+    color: white;
+    cursor: pointer;
+}
+
+/* CLICKABLE IMAGE */
+.event-image-click {
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.event-image-click:hover {
+    transform: scale(1.03);
+}
+
+</style>
+
+
+
+
+<!-- CONTENT -->
+<section class="py-5 bg-light">
+    <div class="container">
+
+        <div class="row g-5">
+
+            <!-- LEFT -->
+            <div class="col-lg-8">
+
+                <!-- DESCRIPTION -->
+                <div class="card-custom p-4 mb-4">
+                 <div class="text-center mb-4">
+                    <h1 class="mb-1 fw-bold">{{ event.title }}</h1>
+
+                    <span class="badge category-badge">
+                    <i class="bi bi-tag me-1" style="font-size:10px;"></i>
+                        {{ event.category.label }}
+                    </span>
+                </div>
+                    <h5>Description</h5>
+                    <p class="text-muted">
+                        {{ event.description }}
+                    </p>
+                    <img src="{{ asset('uploads/events/' ~ event.image) }}" class="event-image-click img-fluid" id="eventImage">
+                </div>
+
+                <!-- DETAILS -->
+                <div class="card-custom p-4">
+                    <h5>Event Details</h5>
+
+                    <div class="row mt-3 ">
+
+                        <div class="col-md-6 info-box">
+                            <i class="bi bi-calendar3" style="font-size:20px; color:#9ca3af;"></i>
+                            <strong>Start:</strong><br>
+                            {{ event.startDateTime|date('d M Y - H:i') }}
+                        </div>
+                        
+
+                        {% if event.endDateTime %}
+                        <div class="col-md-6 info-box">
+                            <i class="bi bi-clock" style="font-size:20px; color:#9ca3af;"></i>
+                            <strong>End:</strong><br>
+                            {{ event.endDateTime|date('d M Y - H:i') }}
+                        </div>
+                        {% endif %}
+
+                        <div class="col-md-6 info-box">
+                            <i class="bi bi-geo-alt" style="font-size:20px; color:#9ca3af;"></i>
+                             <strong>Location:</strong><br>
+                            {{ event.location }}
+                        </div>
+
+                        <div class="col-md-6 info-box">
+                            <i class="bi bi-people" style="font-size:20px; color:#9ca3af;"></i>
+                            <strong>Capacity:</strong><br>
+                            {{ event.capacity }}
+                        </div>
+
+                        <div class="col-md-6 info-box">
+                            <i class="bi bi-person" style="font-size:20px; color:#9ca3af;"></i>
+                            <strong>Organizer:</strong><br>
+                            {{ event.organizer.email }}
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT SIDEBAR -->
+            <div class="col-lg-4 ">
+
+                <div class="booking-card p-4 text-center sticky-top" style="top: 20px;">
+
+                    <h3 class="mb-3">
+                        {{ event.price > 0 ? event.price ~ ' TND' : 'Free' }}
+                    </h3>
+
+                    <p class="text-muted">Reserve your place now</p>
+
+                    <a href="{{ path('app_public_event_subscribe', { id: event.id }) }}" class="btn btn-dark w-100">
+                        <i class="bi bi-ticket me-1" style="font-size:15px;"></i>
+                        Subscribe
+                    </a>
+
+                    <hr>
+
+                    <small class="text-muted">
+                        Limited seats available
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<div id="imageModal" class="image-modal">
+    <span class="close-btn">&times;</span>
+    <img id="modalImage">
+</div>
+
+<script>
+const image = document.getElementById('eventImage');
+const modal = document.getElementById('imageModal');
+const modalImg = document.getElementById('modalImage');
+const closeBtn = document.querySelector('.close-btn');
+
+// OPEN
+image.addEventListener('click', () => {
+    modal.classList.add('active');
+    modalImg.src = image.src;
+});
+
+// CLOSE BUTTON
+closeBtn.addEventListener('click', () => {
+    modal.classList.remove('active');
+});
+
+// CLOSE ON CLICK OUTSIDE
+modal.addEventListener('click', (e) => {
+    if (e.target !== modalImg) {
+        modal.classList.remove('active');
+    }
+});
+</script>
+
+{% endblock %}

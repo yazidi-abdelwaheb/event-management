@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+
+<div style="margin:0; padding:0; background:#f8f7f4; font-family:'Segoe UI', Arial, sans-serif;">
+
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f8f7f4; padding:40px 16px;">
+    <tr><td align="center">
+      <table width="560" cellpadding="0" cellspacing="0"
+             style="background:#ffffff; border-radius:16px; overflow:hidden; border:1px solid #e5e7eb;">
+
+        <tr>
+          <td style="background:#1a1a2e; padding:24px 32px;">
+            <table width="100%" cellpadding="0" cellspacing="0">
+              <tr>
+                <td>
+                  <span style="color:white; font-size:18px; font-weight:700; letter-spacing:0.3px;">
+                    📅 EventManage
+                  </span>
+                </td>
+                <td align="right">
+                  <span style="color:rgba(255,255,255,0.6); font-size:12px;">
+                    Confirmation d'inscription
+                  </span>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <tr>
+          <td style="background:#166534; padding:12px 32px;">
+            <table cellpadding="0" cellspacing="0">
+              <tr>
+                <td style="padding-right:8px; vertical-align:middle;">
+                  <span style="font-size:18px;">✅</span>
+                </td>
+                <td>
+                  <span style="color:white; font-size:14px; font-weight:600;">
+                    Inscription confirmée !
+                  </span>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding:32px 32px 24px;">
+
+            <h1 style="font-size:22px; font-weight:700; color:#1a1a2e; margin:0 0 8px;">
+              Bonjour
+              {% if subscription.firstName is defined %}
+                {{ subscription.firstName }} !
+              {% else %}
+                !
+              {% endif %}
+            </h1>
+            <p style="font-size:15px; color:#6b7280; margin:0 0 28px; line-height:1.6;">
+              Votre inscription à l'événement ci-dessous a bien été enregistrée.
+              Conservez cet email — il vous servira de ticket d'entrée.
+            </p>
+
+            <table width="100%" cellpadding="0" cellspacing="0"
+                   style="background:#f8f7f4; border-radius:12px; margin-bottom:24px; overflow:hidden;">
+              <tr>
+                <td style="background:#1a1a2e; padding:12px 20px;">
+                  <span style="color:white; font-size:14px; font-weight:700;">
+                    🎟️ Détails de l'événement
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:20px;">
+                  <table width="100%" cellpadding="0" cellspacing="0">
+
+                    <tr>
+                      <td style="padding:6px 0; width:40%;">
+                        <span style="font-size:12px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">
+                          Événement
+                        </span>
+                      </td>
+                      <td style="padding:6px 0;">
+                        <span style="font-size:14px; font-weight:700; color:#1a1a2e;">
+                          {{ event.getTitle() }}
+                        </span>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td colspan="2" style="padding:0;">
+                        <div style="height:1px; background:#e5e7eb; margin:4px 0;"></div>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td style="padding:6px 0;">
+                        <span style="font-size:12px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">
+                          📅 Date de début
+                        </span>
+                      </td>
+                      <td style="padding:6px 0;">
+                        <span style="font-size:13px; color:#374151; font-weight:600;">
+                          {{ event.getStartDateTime()|date('l d F Y · H:i') }}
+                        </span>
+                      </td>
+                    </tr>
+
+                    {% if event.getEndDateTime() %}
+                    <tr>
+                      <td style="padding:6px 0;">
+                        <span style="font-size:12px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">
+                          ⏰ Date de fin
+                        </span>
+                      </td>
+                      <td style="padding:6px 0;">
+                        <span style="font-size:13px; color:#374151; font-weight:600;">
+                          {{ event.getEndDateTime()|date('l d F Y · H:i') }}
+                        </span>
+                      </td>
+                    </tr>
+                    {% endif %}
+
+                    <tr>
+                      <td colspan="2" style="padding:0;">
+                        <div style="height:1px; background:#e5e7eb; margin:4px 0;"></div>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td style="padding:6px 0;">
+                        <span style="font-size:12px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">
+                          📍 Lieu
+                        </span>
+                      </td>
+                      <td style="padding:6px 0;">
+                        <span style="font-size:13px; color:#374151; font-weight:600;">
+                          {{ event.getLocation() }}
+                        </span>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td colspan="2" style="padding:0;">
+                        <div style="height:1px; background:#e5e7eb; margin:4px 0;"></div>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td style="padding:6px 0;">
+                        <span style="font-size:12px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">
+                          💰 Prix
+                        </span>
+                      </td>
+                      <td style="padding:6px 0;">
+                        {% if event.getPrice() == 0 %}
+                          <span style="background:#EAF3DE; color:#3B6D11; font-size:12px; font-weight:700;
+                                       padding:3px 10px; border-radius:4px;">
+                            Gratuit
+                          </span>
+                        {% else %}
+                          <span style="font-size:13px; color:#374151; font-weight:700;">
+                            {{ event.getPrice()|number_format(2, '.', ' ') }} TND
+                          </span>
+                        {% endif %}
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td colspan="2" style="padding:0;">
+                        <div style="height:1px; background:#e5e7eb; margin:4px 0;"></div>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td style="padding:6px 0;">
+                        <span style="font-size:12px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">
+                          🎫 N° Réservation
+                        </span>
+                      </td>
+                      <td style="padding:6px 0;">
+                        <span style="font-size:13px; font-weight:700; color:#1a1a2e;
+                                     font-family: monospace; letter-spacing:1px;">
+                          #{{ '%06d'|format(subscription.getId()) }}
+                        </span>
+                      </td>
+                    </tr>
+
+                  </table>
+                </td>
+              </tr>
+            </table>
+
+            <table width="100%" cellpadding="0" cellspacing="0"
+                   style="background:#f8f7f4; border-radius:12px; margin-bottom:24px;">
+              <tr>
+                <td style="padding:24px; text-align:center;">
+                  <p style="font-size:14px; font-weight:700; color:#1a1a2e; margin:0 0 4px;">
+                    Votre ticket QR Code
+                  </p>
+                  <p style="font-size:12px; color:#9ca3af; margin:0 0 16px;">
+                    Présentez ce QR code à l'entrée de l'événement
+                  </p>
+                  <div style="display:inline-block; background:white; padding:12px;
+                              border-radius:12px; border:2px solid #e5e7eb;">
+                    <img src="{{ qrUrl }}"
+                         alt="QR Code ticket"
+                         width="160"
+                         height="160"
+                         style="display:block;">
+                  </div>
+                  <p style="font-size:11px; color:#9ca3af; margin:12px 0 0;
+                             font-family:monospace; letter-spacing:1px;">
+                    ID: #{{ '%06d'|format(subscription.getId()) }}
+                  </p>
+                </td>
+              </tr>
+            </table>
+
+            <table width="100%" cellpadding="0" cellspacing="0"
+                   style="background:#f0f9ff; border:1px solid #bae6fd;
+                          border-radius:10px; margin-bottom:24px;">
+              <tr>
+                <td style="padding:14px 16px;">
+                  <table cellpadding="0" cellspacing="0">
+                    <tr>
+                      <td style="vertical-align:top; padding-right:8px; font-size:16px;">ℹ️</td>
+                      <td style="font-size:13px; color:#0369a1; line-height:1.6;">
+                        Conservez cet email comme preuve d'inscription.
+                        En cas de problème, contactez-nous avec votre numéro de réservation
+                        <strong>#{{ '%06d'|format(subscription.getId()) }}</strong>.
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+
+            <p style="font-size:15px; color:#374151; margin:0; line-height:1.6;">
+              À très bientôt à l'événement ! 🎉
+            </p>
+
+          </td>
+        </tr>
+
+        <tr>
+          <td style="border-top:1px solid #e5e7eb; padding:20px 32px;">
+            <table width="100%" cellpadding="0" cellspacing="0">
+              <tr>
+                <td style="font-size:12px; color:#9ca3af;">
+                  © {{ "now"|date("Y") }} EventManage. Tous droits réservés.
+                </td>
+                <td align="right" style="font-size:12px; color:#9ca3af;">
+                  Ne pas répondre à cet email
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+      </table>
+    </td></tr>
+  </table>
+
+<div>
