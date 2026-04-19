@@ -7,9 +7,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
 #[ORM\HasLifecycleCallbacks]
+
 class Event
 {
     #[ORM\Id]
@@ -267,5 +270,37 @@ class Event
     public function __tostring(): string
     {
         return $this->title;
+    }
+
+
+    // Date validation logic
+    #[Assert\Callback]
+    public function validateDates(ExecutionContextInterface $context): void
+    {
+        $now = new \DateTime();
+
+        if ($this->start_date_time !== null && $this->start_date_time < $now) {
+            $context->buildViolation('The start date must be in the future.')
+                ->atPath('start_date_time')
+                ->addViolation();
+        }
+
+        
+        if (
+            $this->start_date_time !== null &&
+            $this->end_date_time   !== null &&
+            $this->end_date_time <= $this->start_date_time
+        ) {
+            $context->buildViolation('The end date must be after the start date.')
+                ->atPath('end_date_time')
+                ->addViolation();
+        }
+
+        
+        if ($this->end_date_time !== null && $this->end_date_time < $now) {
+            $context->buildViolation('The end date must be in the future.')
+                ->atPath('end_date_time')
+                ->addViolation();
+        }
     }
 }

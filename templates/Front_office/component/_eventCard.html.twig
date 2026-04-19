@@ -85,13 +85,19 @@
         margin: 0;
     }
 
+    a.disabled {
+        pointer-events: none;
+        cursor: default;
+        opacity: 0.6;
+    }
+
 
 </style>
 
 
 
 <div class="col-md-4 col-sm-6">
-    <div class="event-card h-100">
+    <div class="event-card h-100" >
 
         <div class="event-thumb" style="background:#1a1a2e;">
 
@@ -118,11 +124,11 @@
                 </span>
             {% endif %}
 
-            {#
-            {% if event.capacity is defined and event.capacity is not null %}
-                {% set remaining = event.capacity - event.reservations|length %}
-                {% if remaining <= 5 and remaining > 0 %}
-                    <div class="featured-banner" style="background:#dc2626;">
+            
+            
+                {% set remaining = event.capacity - event.subscribedCount %}
+                {% if  remaining > 0 %}
+                    <div class="featured-banner" style="background:{% if remaining <= 10 %}#dc2626{% else %}green{% endif %};">
                         🔥 More than {{ remaining }} place{{ remaining > 1 ? 's' : '' }} !
                     </div>
                 {% elseif remaining <= 0 %}
@@ -130,16 +136,16 @@
                         Complete
                     </div>
                 {% endif %}
-            {% endif %}#}
+            
 
         </div>
 
         
         <div style="padding:1rem; display:flex; flex-direction:column; flex:1;">
 
-            <p style="font-size:15px; font-weight:700; color:#1a1a2e; margin:0 0 10px; line-height:1.4;">
+            <a href="{{ path('app_public_event_show', { id: event.id }) }}" style="font-size:15px; font-weight:700; color:#1a1a2e; margin:0 0 10px; line-height:1.4; text-decoration:none;">
                 {{ event.title }}
-            </p>
+            </a>
 
             <div class="meta-row">
                 <i class="bi bi-calendar3" style="font-size:12px; color:#9ca3af;"></i>

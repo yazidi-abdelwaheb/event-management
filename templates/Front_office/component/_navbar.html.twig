@@ -40,10 +40,12 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Contact</a>
+          <a class="nav-link {{ app.request.attributes.get('_route') starts with 'app_home_page_contact' ? 'active' : '' }}"
+             href="{{ path('app_home_page_contact') }}">Contact</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">About</a>
+          <a class="nav-link {{ app.request.attributes.get('_route') starts with 'app_home_page_about' ? 'active' : '' }}"
+             href="{{ path('app_home_page_about') }}">About</a>
         </li>
       </ul>
 
@@ -82,13 +84,13 @@
                 </div>
               </li>
               <li>
-                <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#"
+                <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="{{ path('app_my_profile') }}"
                    style="font-size:13px; color:#374151;">
                   <i class="bi bi-person" style="font-size:14px;"></i> My Profile
                 </a>
               </li>
               <li>
-                <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#"
+                <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="{{ path('app_my_profile_tickets') }}"
                    style="font-size:13px; color:#374151;">
                   <i class="bi bi-ticket" style="font-size:14px;"></i> My Tickets
                 </a>

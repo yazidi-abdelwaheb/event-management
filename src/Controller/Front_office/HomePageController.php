@@ -24,4 +24,16 @@ final class HomePageController extends AbstractController
             'calendar_events' => $eventRepository->findAllForCalendar(),
         ]);
     }
+
+    #[Route('/contact', name: 'app_home_page_contact')]
+    public function contact(): Response
+    {
+        return $this->render('Front_office/home_page/contact.html.twig');
+    }
+
+    #[Route('/about', name: 'app_home_page_about')]
+    public function about(): Response
+    {
+        return $this->render('Front_office/home_page/about.html.twig');
+    }
 }

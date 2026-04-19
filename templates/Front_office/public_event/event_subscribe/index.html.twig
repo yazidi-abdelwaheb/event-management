@@ -74,7 +74,7 @@
                                 <label class="form-label fw-bold text-dark small mb-2">FULL NAME</label>
                                 <div class="input-group custom-input-group">
                                     <span class="input-group-text border-0 bg-light"><i class="bi bi-person"></i></span>
-                                    {{ form_widget(form.full_name, {'attr': {'class': 'form-control border-0 bg-light', 'placeholder': 'Enter your full name'}}) }}
+                                    {{ form_widget(form.full_name, {'attr': {'class': 'form-control border-0 bg-light', 'placeholder': 'Enter your full name' , 'value': app.user ? app.user.firstName ~ ' ' ~ app.user.lastName : '' , 'disabled': app.user ? true : false}}) }}
                                 </div>
                                 <div class="text-danger small mt-1">
                                     {{ form_errors(form.full_name) }}
@@ -86,7 +86,7 @@
                                 <label class="form-label fw-bold text-dark small mb-2">EMAIL ADDRESS</label>
                                 <div class="input-group custom-input-group">
                                     <span class="input-group-text border-0 bg-light"><i class="bi bi-envelope"></i></span>
-                                    {{ form_widget(form.email, {'attr': {'class': 'form-control border-0 bg-light', 'placeholder': 'name@example.com'}}) }}
+                                    {{ form_widget(form.email, {'attr': {'class': 'form-control border-0 bg-light', 'placeholder': 'name@example.com' , 'value': app.user ? app.user.email : '' , 'disabled': app.user ? true : false}}) }}
                                 </div>
                                 <div class="text-danger small mt-1">
                                     {{ form_errors(form.email) }}

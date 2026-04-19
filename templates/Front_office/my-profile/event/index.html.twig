@@ -1,0 +1,261 @@
+{% extends 'Front_office/my-profile/base.html.twig' %}
+
+{% block title %}My Events — EventManage{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .my-event-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        overflow: hidden;
+        transition: transform 0.2s;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    .my-event-card:hover { transform: translateY(-2px); }
+
+    .add-event-card {
+        background: white;
+        border: 2px dashed #d1d5db;
+        border-radius: 14px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 340px;
+        text-decoration: none;
+        transition: all 0.2s;
+        cursor: pointer;
+        height: 100%;
+    }
+    .add-event-card:hover {
+        border-color: #1a1a2e;
+        background: #f8f7f4;
+    }
+    .add-event-card:hover .add-icon {
+        background: #1a1a2e;
+        color: white;
+    }
+    .add-icon {
+        width: 56px; height: 56px;
+        background: #f3f4f6;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 22px; color: #9ca3af;
+        margin-bottom: 1rem;
+        transition: all 0.2s;
+    }
+
+    .event-thumb {
+        height: 160px;
+        position: relative; overflow: hidden; flex-shrink: 0;
+        background: #1a1a2e;
+        display: flex; align-items: center; justify-content: center;
+    }
+    .event-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+    .event-status {
+        position: absolute; top: 10px; left: 10px;
+        font-size: 11px; font-weight: 700;
+        padding: 3px 10px; border-radius: 20px;
+    }
+    .event-capacity {
+        position: absolute; top: 10px; right: 10px;
+        background: rgba(0,0,0,0.6); color: white;
+        font-size: 11px; font-weight: 600;
+        padding: 3px 10px; border-radius: 20px;
+        display: flex; align-items: center; gap: 4px;
+    }
+
+    .event-body {
+        padding: 1rem; flex: 1; display: flex; flex-direction: column;
+    }
+
+    .event-actions {
+        display: flex; gap: 6px;
+        padding: 0.75rem 1rem;
+        border-top: 1px solid #f3f4f6;
+        background: #fafafa;
+    }
+    .btn-action {
+        flex: 1; padding: 7px 8px; border-radius: 8px;
+        font-size: 12px; font-weight: 600;
+        text-decoration: none; text-align: center;
+        display: flex; align-items: center; justify-content: center; gap: 4px;
+        transition: all 0.2s; border: none; cursor: pointer;
+    }
+    .btn-show  { background: #f3f4f6; color: #374151; }
+    .btn-show:hover  { background: #e5e7eb; color: #1a1a2e; }
+    .btn-edit  { background: #EEEDFE; color: #534AB7; }
+    .btn-edit:hover  { background: #534AB7; color: white; }
+    .btn-delete { background: #fef2f2; color: #dc2626; }
+    .btn-delete:hover { background: #dc2626; color: white; }
+
+    .meta-row { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+    .meta-text { font-size: 12px; color: #6b7280; margin: 0; }
+
+    .subscribers-bar {
+        height: 4px; background: #e5e7eb;
+        border-radius: 4px; overflow: hidden; margin-top: 8px;
+    }
+    .subscribers-fill {
+        height: 100%; background: #1a1a2e;
+        border-radius: 4px; transition: width 0.3s;
+    }
+</style>
+{% endblock %}
+
+{% block profile_content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 style="font-size:18px; font-weight:700; color:#1a1a2e; margin:0 0 4px;">
+            My Events
+        </h2>
+        <p style="font-size:13px; color:#6b7280; margin:0;">
+            {{ events|length }} event{{ events|length != 1 ? 's' : '' }} created
+        </p>
+    </div>
+    <a href="{{ path('app_event_new') }}"
+       style="background:#1a1a2e; color:white; text-decoration:none; font-size:13px;
+              font-weight:600; padding:9px 18px; border-radius:8px; display:inline-flex;
+              align-items:center; gap:6px;">
+        <i class="bi bi-plus-lg" style="font-size:13px;"></i>
+        New Event
+    </a>
+</div>
+
+<div class="row g-4">
+
+    <div class="col-md-4 col-sm-6">
+        <a href="{{ path('app_event_new') }}" class="add-event-card">
+            <div class="add-icon">
+                <i class="bi bi-plus-lg"></i>
+            </div>
+            <p style="font-size:15px; font-weight:700; color:#374151; margin:0 0 6px;">
+                Create a new event
+            </p>
+            <p style="font-size:13px; color:#9ca3af; margin:0;
+                      text-align:center; max-width:180px; line-height:1.5;">
+                Click here to add a new event to your list
+            </p>
+        </a>
+    </div>
+
+    {% for event in events %}
+        <div class="col-md-4 col-sm-6">
+            <div class="my-event-card">
+
+                <div class="event-thumb">
+                    {% if event.getImage() %}
+                        <img src="{{ asset('uploads/events/' ~ event.getImage()) }}"
+                             alt="{{ event.getTitle() }}">
+                    {% else %}
+                        <i class="bi bi-calendar-event"
+                           style="font-size:40px; color:rgba(255,255,255,0.2);"></i>
+                    {% endif %}
+
+                    {% if event.getStartDateTime()|date('U') < "now"|date('U') %}
+                        <span class="event-status"
+                              style="background:#fef2f2; color:#dc2626;">
+                            <i class="bi bi-clock-history me-1" style="font-size:10px;"></i>Past
+                        </span>
+                    {% else %}
+                        <span class="event-status"
+                              style="background:#EAF3DE; color:#3B6D11;">
+                            <i class="bi bi-circle-fill me-1" style="font-size:7px;"></i>Upcoming
+                        </span>
+                    {% endif %}
+
+                    <span class="event-capacity">
+                        <i class="bi bi-people" style="font-size:10px;"></i>
+                        {{ event.getSubscribedCount() }}/{{ event.getCapacity() }}
+                    </span>
+                </div>
+
+                <div class="event-body">
+
+                    <p style="font-size:14px; font-weight:700; color:#1a1a2e;
+                               margin:0 0 10px; line-height:1.3;">
+                        {{ event.getTitle() }}
+                    </p>
+
+                    <div class="meta-row">
+                        <i class="bi bi-calendar3" style="font-size:11px; color:#9ca3af;"></i>
+                        <span class="meta-text">
+                            {{ event.getStartDateTime()|date('d M Y · H:i') }}
+                        </span>
+                    </div>
+
+                    <div class="meta-row">
+                        <i class="bi bi-geo-alt" style="font-size:11px; color:#9ca3af;"></i>
+                        <span class="meta-text">{{ event.getLocation() }}</span>
+                    </div>
+
+                    <div class="meta-row">
+                        <i class="bi bi-tag" style="font-size:11px; color:#9ca3af;"></i>
+                        <span class="meta-text">{{ event.getCategory().getLabel() }}</span>
+                    </div>
+
+                    <div class="meta-row">
+                        <i class="bi bi-currency-dollar" style="font-size:11px; color:#9ca3af;"></i>
+                        <span class="meta-text">
+                            {% if event.getPrice() == 0 %}
+                                <span style="color:#3B6D11; font-weight:600;">Free</span>
+                            {% else %}
+                                <strong style="color:#1a1a2e;">
+                                    {{ event.getPrice()|number_format(2, '.', ' ') }} TND
+                                </strong>
+                            {% endif %}
+                        </span>
+                    </div>
+
+                    <div class="mt-auto pt-2">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span style="font-size:11px; color:#9ca3af;">Subscribers</span>
+                            <span style="font-size:11px; font-weight:600; color:#1a1a2e;">
+                                {{ event.getSubscribedCount() }} / {{ event.getCapacity() }}
+                            </span>
+                        </div>
+                        <div class="subscribers-bar">
+                            <div class="subscribers-fill"
+                                 style="width:{{ event.getCapacity() > 0
+                                    ? ((event.getSubscribedCount() / event.getCapacity()) * 100)|round
+                                    : 0 }}%;">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="event-actions">
+                    <a href="{{ path('app_event_show', {id: event.getId()}) }}"
+                       class="btn-action btn-show">
+                        <i class="bi bi-eye" style="font-size:12px;"></i>View
+                    </a>
+                    <a href="{{ path('app_event_edit', {id: event.getId()}) }}"
+                       class="btn-action btn-edit">
+                        <i class="bi bi-pencil" style="font-size:12px;"></i>Edit
+                    </a>
+                    <form method="post"
+                          action="{{ path('app_event_delete', {id: event.getId()}) }}"
+                          style="flex:1;"
+                          onsubmit="return confirm('Delete \'{{ event.getTitle()|e('js') }}\' ? This action cannot be undone.')">
+                        <input type="hidden" name="_token"
+                               value="{{ csrf_token('delete' ~ event.getId()) }}">
+                        <button type="submit" class="btn-action btn-delete" style="width:100%;">
+                            <i class="bi bi-trash" style="font-size:12px;"></i>Delete
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    {% endfor %}
+
+</div>
+
+{% endblock %}

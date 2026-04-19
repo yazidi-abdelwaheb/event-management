@@ -1,0 +1,386 @@
+{% extends 'Front_office/base.html.twig' %}
+
+{% block title %}Event Management - About Us{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .about-hero {
+        background: #1a1a2e;
+        padding: 4rem 1.5rem;
+        text-align: center;
+    }
+    .value-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        padding: 1.75rem;
+        height: 100%;
+        transition: transform 0.2s;
+    }
+    .value-card:hover { transform: translateY(-3px); }
+    .value-icon {
+        width: 52px; height: 52px;
+        border-radius: 12px;
+        display: flex; align-items: center; justify-content: center;
+        margin-bottom: 1rem;
+    }
+    .team-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        padding: 1.5rem;
+        text-align: center;
+        height: 100%;
+        transition: transform 0.2s;
+    }
+    .team-card:hover { transform: translateY(-3px); }
+    .team-avatar {
+        width: 72px; height: 72px;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        margin: 0 auto 1rem;
+        font-size: 22px; font-weight: 700; color: white;
+    }
+    .mission-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        padding: 2rem;
+        height: 100%;
+    }
+    .mission-icon {
+        width: 48px; height: 48px;
+        border-radius: 12px;
+        display: flex; align-items: center; justify-content: center;
+        margin-bottom: 1rem;
+    }
+    .timeline-item {
+        display: flex;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    .timeline-dot {
+        width: 40px; height: 40px;
+        background: #1a1a2e;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
+        color: white; font-size: 12px; font-weight: 700;
+    }
+    .section-title {
+        font-size: 26px; font-weight: 700;
+        color: #1a1a2e; margin: 0 0 6px;
+    }
+    .section-subtitle { font-size: 14px; color: #6b7280; margin: 0; }
+</style>
+{% endblock %}
+
+{% block body %}
+<div style="background:#f8f7f4;">
+
+    <section class="about-hero">
+        <div class="container">
+            <div style="width:100px; height:100px; background:rgba(255,255,255,0.1);
+                        border-radius:16px; display:flex; align-items:center;
+                        justify-content:center; margin:0 auto 1.5rem;">
+                <image src="{{ asset('logo.png') }}" width="100%" height="100%" alt="Logo Event Management Platform">
+            </div>
+            <h1 style="color:white; font-size:36px; font-weight:700; margin:0 0 1rem;">
+                About Event Management Platform
+            </h1>
+            <p style="color:rgba(255,255,255,0.65); font-size:16px; line-height:1.7;
+                      max-width:580px; margin:0 auto;">
+                We connect event organizers with thousands of participants
+                across Tunisia — making every experience unforgettable.
+            </p>
+        </div>
+    </section>
+
+    <section style="background:white; border-bottom:1px solid #e5e7eb; padding:2rem 1.5rem;">
+        <div class="container">
+            <div class="row text-center g-3">
+                <div class="col-6 col-md-3">
+                    <p style="font-size:36px; font-weight:700; color:#1a1a2e; margin:0;">500+</p>
+                    <p style="font-size:13px; color:#6b7280; margin:4px 0 0;">Events Organized</p>
+                </div>
+                <div class="col-6 col-md-3">
+                    <p style="font-size:36px; font-weight:700; color:#1a1a2e; margin:0;">12k+</p>
+                    <p style="font-size:13px; color:#6b7280; margin:4px 0 0;">Happy Participants</p>
+                </div>
+                <div class="col-6 col-md-3">
+                    <p style="font-size:36px; font-weight:700; color:#1a1a2e; margin:0;">150+</p>
+                    <p style="font-size:13px; color:#6b7280; margin:4px 0 0;">Partner Organizers</p>
+                </div>
+                <div class="col-6 col-md-3">
+                    <p style="font-size:36px; font-weight:700; color:#1a1a2e; margin:0;">4.9★</p>
+                    <p style="font-size:13px; color:#6b7280; margin:4px 0 0;">Average Rating</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section style="padding:4rem 1.5rem;">
+        <div class="container">
+            <div class="text-center mb-4">
+                <h2 class="section-title">Mission, Vision & Values</h2>
+                <p class="section-subtitle">What drives us every day</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="mission-card">
+                        <div class="mission-icon" style="background:#EAF3DE;">
+                            <i class="bi bi-bullseye" style="font-size:22px; color:#3B6D11;"></i>
+                        </div>
+                        <h3 style="font-size:17px; font-weight:700; color:#1a1a2e; margin:0 0 8px;">Our Mission</h3>
+                        <p style="font-size:14px; color:#6b7280; line-height:1.7; margin:0;">
+                            To simplify access to cultural, professional and entertainment events
+                            for everyone in Tunisia through an intuitive and reliable platform.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mission-card" style="border:2px solid #1a1a2e;">
+                        <div class="mission-icon" style="background:#EEEDFE;">
+                            <i class="bi bi-eye" style="font-size:22px; color:#534AB7;"></i>
+                        </div>
+                        <h3 style="font-size:17px; font-weight:700; color:#1a1a2e; margin:0 0 8px;">Our Vision</h3>
+                        <p style="font-size:14px; color:#6b7280; line-height:1.7; margin:0;">
+                            To become the leading event management platform in Tunisia,
+                            creating a dynamic ecosystem between organizers and participants.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mission-card">
+                        <div class="mission-icon" style="background:#FAEEDA;">
+                            <i class="bi bi-heart" style="font-size:22px; color:#854F0B;"></i>
+                        </div>
+                        <h3 style="font-size:17px; font-weight:700; color:#1a1a2e; margin:0 0 8px;">Our Values</h3>
+                        <p style="font-size:14px; color:#6b7280; line-height:1.7; margin:0;">
+                            Transparency, innovation, accessibility and customer satisfaction
+                            are at the heart of every decision we make.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section style="background:white; padding:4rem 1.5rem;">
+        <div class="container">
+            <div class="row g-5 align-items-center">
+                <div class="col-lg-5">
+                    <h2 class="section-title">Our Story</h2>
+                    <p class="section-subtitle mb-4">From idea to reality</p>
+                    <p style="font-size:14px; color:#6b7280; line-height:1.8; margin:0 0 1rem;">
+                        Event Management was born in 2022 from a simple observation: finding and booking
+                        events in Tunisia was too complicated. We wanted to change that.
+                    </p>
+                    <p style="font-size:14px; color:#6b7280; line-height:1.8; margin:0;">
+                        Today, we are proud to connect hundreds of organizers with thousands of
+                        participants every month, all across the country.
+                    </p>
+                </div>
+                <div class="col-lg-7">
+                    <div class="timeline-item">
+                        <div class="timeline-dot">22</div>
+                        <div style="flex:1; padding-top:6px;">
+                            <p style="font-size:14px; font-weight:700; color:#1a1a2e; margin:0 0 4px;">
+                                2022 — Launch
+                            </p>
+                            <p style="font-size:13px; color:#6b7280; margin:0; line-height:1.6;">
+                                Platform created with 10 pilot events in Tunis.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot">23</div>
+                        <div style="flex:1; padding-top:6px;">
+                            <p style="font-size:14px; font-weight:700; color:#1a1a2e; margin:0 0 4px;">
+                                2023 — Growth
+                            </p>
+                            <p style="font-size:13px; color:#6b7280; margin:0; line-height:1.6;">
+                                Expanded to Sfax, Sousse and Monastir. Reached 100+ active events.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot">24</div>
+                        <div style="flex:1; padding-top:6px;">
+                            <p style="font-size:14px; font-weight:700; color:#1a1a2e; margin:0 0 4px;">
+                                2024 — Innovation
+                            </p>
+                            <p style="font-size:13px; color:#6b7280; margin:0; line-height:1.6;">
+                                Launched QR code tickets, interactive calendar and mobile app.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="timeline-item" style="margin-bottom:0;">
+                        <div class="timeline-dot" style="background:#3B6D11;">25</div>
+                        <div style="flex:1; padding-top:6px;">
+                            <p style="font-size:14px; font-weight:700; color:#1a1a2e; margin:0 0 4px;">
+                                2025 — Today
+                            </p>
+                            <p style="font-size:13px; color:#6b7280; margin:0; line-height:1.6;">
+                                500+ events, 12,000+ participants and a passionate team of 15.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section style="padding:4rem 1.5rem;">
+        <div class="container">
+            <div class="text-center mb-4">
+                <h2 class="section-title">What Sets Us Apart</h2>
+                <p class="section-subtitle">Why choose EventManage?</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-3 col-sm-6">
+                    <div class="value-card">
+                        <div class="value-icon" style="background:#EAF3DE;">
+                            <i class="bi bi-shield-check" style="font-size:22px; color:#3B6D11;"></i>
+                        </div>
+                        <h4 style="font-size:15px; font-weight:700; color:#1a1a2e; margin:0 0 8px;">Reliable</h4>
+                        <p style="font-size:13px; color:#6b7280; margin:0; line-height:1.6;">
+                            Secure payments, guaranteed tickets and 7/7 customer support.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="value-card">
+                        <div class="value-icon" style="background:#EEEDFE;">
+                            <i class="bi bi-lightning-charge" style="font-size:22px; color:#534AB7;"></i>
+                        </div>
+                        <h4 style="font-size:15px; font-weight:700; color:#1a1a2e; margin:0 0 8px;">Fast</h4>
+                        <p style="font-size:13px; color:#6b7280; margin:0; line-height:1.6;">
+                            Book in under 2 minutes with instant email confirmation.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="value-card">
+                        <div class="value-icon" style="background:#FAEEDA;">
+                            <i class="bi bi-people" style="font-size:22px; color:#854F0B;"></i>
+                        </div>
+                        <h4 style="font-size:15px; font-weight:700; color:#1a1a2e; margin:0 0 8px;">Community</h4>
+                        <p style="font-size:13px; color:#6b7280; margin:0; line-height:1.6;">
+                            An active community of passionate organizers and participants.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="value-card">
+                        <div class="value-icon" style="background:#FAECE7;">
+                            <i class="bi bi-phone" style="font-size:22px; color:#993C1D;"></i>
+                        </div>
+                        <h4 style="font-size:15px; font-weight:700; color:#1a1a2e; margin:0 0 8px;">Mobile</h4>
+                        <p style="font-size:13px; color:#6b7280; margin:0; line-height:1.6;">
+                            Mobile app available on iOS and Android to manage your tickets.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section style="background:white; padding:4rem 1.5rem;">
+        <div class="container">
+            <div class="text-center mb-4">
+                <h2 class="section-title">Meet the Team</h2>
+                <p class="section-subtitle">The people behind EventManage</p>
+            </div>
+            <div class="row g-4 justify-content-center">
+                <div class="col-md-3 col-sm-6">
+                    <div class="team-card">
+                        <div class="team-avatar" style="background:#1a1a2e;">FB</div>
+                        <p style="font-size:15px; font-weight:700; color:#1a1a2e; margin:0 0 4px;">Ahmed Y.</p>
+                        <p style="font-size:12px; color:#6b7280; margin:0 0 10px;">Founder & CEO</p>
+                        <div class="d-flex gap-2 justify-content-center">
+                            <a href="#" style="color:#6b7280; font-size:15px;">
+                                <i class="bi bi-linkedin"></i>
+                            </a>
+                            <a href="#" style="color:#6b7280; font-size:15px;">
+                                <i class="bi bi-twitter-x"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="team-card">
+                        <div class="team-avatar" style="background:#534AB7;">AY</div>
+                        <p style="font-size:15px; font-weight:700; color:#1a1a2e; margin:0 0 4px;">Abdelwaheb Y.</p>
+                        <p style="font-size:12px; color:#6b7280; margin:0 0 10px;">CTO & Lead Dev</p>
+                        <div class="d-flex gap-2 justify-content-center">
+                            <a href="#" style="color:#6b7280; font-size:15px;">
+                                <i class="bi bi-linkedin"></i>
+                            </a>
+                            <a href="#" style="color:#6b7280; font-size:15px;">
+                                <i class="bi bi-github"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="team-card">
+                        <div class="team-avatar" style="background:#3B6D11;">MK</div>
+                        <p style="font-size:15px; font-weight:700; color:#1a1a2e; margin:0 0 4px;">Mohamed K.</p>
+                        <p style="font-size:12px; color:#6b7280; margin:0 0 10px;">Marketing Manager</p>
+                        <div class="d-flex gap-2 justify-content-center">
+                            <a href="#" style="color:#6b7280; font-size:15px;">
+                                <i class="bi bi-linkedin"></i>
+                            </a>
+                            <a href="#" style="color:#6b7280; font-size:15px;">
+                                <i class="bi bi-instagram"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="team-card">
+                        <div class="team-avatar" style="background:#854F0B;">LM</div>
+                        <p style="font-size:15px; font-weight:700; color:#1a1a2e; margin:0 0 4px;">Leila M.</p>
+                        <p style="font-size:12px; color:#6b7280; margin:0 0 10px;">UX / UI Designer</p>
+                        <div class="d-flex gap-2 justify-content-center">
+                            <a href="#" style="color:#6b7280; font-size:15px;">
+                                <i class="bi bi-linkedin"></i>
+                            </a>
+                            <a href="#" style="color:#6b7280; font-size:15px;">
+                                <i class="bi bi-dribbble"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section style="background:#1a1a2e; padding:4rem 1.5rem; text-align:center;">
+        <div style="max-width:520px; margin:0 auto;">
+            <h2 style="color:white; font-size:26px; font-weight:700; margin:0 0 8px;">
+                Ready to Experience It?
+            </h2>
+            <p style="color:rgba(255,255,255,0.65); font-size:15px; margin:0 0 2rem; line-height:1.6;">
+                Join thousands of participants and discover the best events near you.
+            </p>
+            <div class="d-flex gap-3 justify-content-center flex-wrap">
+                <a href="{{ path('app_public_event') }}"
+                   style="background:white; color:#1a1a2e; text-decoration:none; font-size:14px;
+                          font-weight:700; padding:12px 28px; border-radius:10px; display:inline-block;">
+                    Explore Events →
+                </a>
+                <a href="{{ path('app_register') }}"
+                   style="background:rgba(255,255,255,0.1); color:white; text-decoration:none;
+                          font-size:14px; font-weight:600; padding:12px 28px; border-radius:10px;
+                          border:1px solid rgba(255,255,255,0.2); display:inline-block;">
+                    Create an Account
+                </a>
+            </div>
+        </div>
+    </section>
+
+</div>
+{% endblock %}

@@ -19,8 +19,10 @@ class EventRepository extends ServiceEntityRepository
     public function findAllMinContentPaginated(int $limit = 10, int $offset = 0): array
     {
         return $this->createQueryBuilder('e')
-            ->select('e.id, e.title, e.image, e.start_date_time, e.end_date_time, e.location, e.price, c.label as category')
+            ->select('e.id, e.title, e.image, e.start_date_time, e.end_date_time, e.location, e.price,e.capacity, c.label as category , COUNT(r.id) as subscribedCount')
             ->join('e.category', 'c')
+            ->leftJoin('e.eventSubscribes', 'r')
+            ->groupBy('e.id')
             ->orderBy('e.created_at', 'DESC')
             ->setFirstResult($offset)
             ->setMaxResults($limit)
@@ -31,7 +33,7 @@ class EventRepository extends ServiceEntityRepository
     public function findOneMinContent(int $id): ?array
     {
         return $this->createQueryBuilder('e')
-            ->select('e.id, e.title, e.image, e.start_date_time, e.end_date_time, e.location, e.price, c.label as category')
+            ->select('e.id, e.title, e.image, e.start_date_time, e.end_date_time,e.capacity, e.location, e.price, c.label as category')
             ->join('e.category', 'c')
             ->where('e.id = :id')
             ->setParameter('id', $id)
@@ -42,7 +44,7 @@ class EventRepository extends ServiceEntityRepository
      public function findAllForCalendar(): array
     {
         return $this->createQueryBuilder('e')
-            ->select('e.id, e.title, e.description, e.image, e.start_date_time as startDateTime, e.end_date_time as endDateTime, e.location, e.price, c.label as category')
+            ->select('e.id, e.title, e.description, e.image,e.capacity, e.start_date_time as startDateTime, e.end_date_time as endDateTime, e.location, e.price, c.label as category')
             ->join('e.category', 'c')
             ->getQuery()
             ->getResult();

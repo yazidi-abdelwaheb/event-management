@@ -1,0 +1,121 @@
+{% extends 'Front_office/my-profile/base.html.twig' %}
+
+{% block title %}My Tickets — EventManage{% endblock %}
+
+{% block profile_content %}
+<div class="content-card">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 style="font-size:18px; font-weight:700; color:#1a1a2e; margin:0 0 4px;">
+                My Tickets
+            </h2>
+            <p style="font-size:13px; color:#6b7280; margin:0;">
+                Your event reservations
+            </p>
+        </div>
+    </div>
+
+    {% if tickets is defined and tickets|length > 0 %}
+        <div class="d-flex flex-column gap-3">
+            {% for ticket in tickets %}
+                <div style="background:#f8f7f4; border:1px solid #e5e7eb; border-radius:12px;
+                            padding:1.25rem; display:flex; align-items:center;
+                            gap:1rem; flex-wrap:wrap;">
+
+                    
+                    <div style="width:4px; height:60px; background:#1a1a2e;
+                                border-radius:4px; flex-shrink:0;"></div>
+
+                    
+                    <div style="flex:1; min-width:200px;">
+                        <a href="{{ path('app_public_event_show', {id: ticket.event.getId()}) }}" style="font-size:15px; font-weight:700; color:#1a1a2e; margin:0 0 4px; text-decoration:none;">
+                            {{ ticket.event.getTitle() }}
+                        </a>
+                        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                            <span style="font-size:12px; color:#6b7280;">
+                                <i class="bi bi-calendar3 me-1"></i>
+                                {{ ticket.event.getStartDateTime()|date('d M Y · H:i') }}
+                            </span>
+                            <span style="font-size:12px; color:#6b7280;">
+                                <i class="bi bi-geo-alt me-1"></i>
+                                {{ ticket.event.getLocation() }}
+                            </span>
+                        </div>
+                    </div>
+
+                    
+                    <div style="text-align:center; padding:0 1rem;">
+                        <p style="font-size:11px; color:#9ca3af; text-transform:uppercase;
+                                   letter-spacing:0.5px; margin:0 0 2px;">Ticket</p>
+                        <p style="font-size:13px; font-weight:700; color:#1a1a2e;
+                                   font-family:monospace; letter-spacing:1px; margin:0;">
+                            #{{ '%06d'|format(ticket.getId()) }}
+                        </p>
+                    </div>
+
+                    
+                    <div style="text-align:center;">
+                        {% if ticket.status is defined %}
+                            {% if ticket.status == 'confirmed' %}
+                                <span style="background:#EAF3DE; color:#3B6D11; font-size:11px;
+                                             font-weight:700; padding:4px 12px; border-radius:20px;">
+                                    <i class="bi bi-check-circle me-1"></i>Confirmed
+                                </span>
+                            {% elseif ticket.status == 'pending' %}
+                                <span style="background:#fef3c7; color:#92400e; font-size:11px;
+                                             font-weight:700; padding:4px 12px; border-radius:20px;">
+                                    <i class="bi bi-clock me-1"></i>Pending
+                                </span>
+                            {% else %}
+                                <span style="background:#fef2f2; color:#dc2626; font-size:11px;
+                                             font-weight:700; padding:4px 12px; border-radius:20px;">
+                                    <i class="bi bi-x-circle me-1"></i>Cancelled
+                                </span>
+                            {% endif %}
+                        {% else %}
+                            <span style="background:#EAF3DE; color:#3B6D11; font-size:11px;
+                                         font-weight:700; padding:4px 12px; border-radius:20px;">
+                                <i class="bi bi-check-circle me-1"></i>Confirmed
+                            </span>
+                        {% endif %}
+                    </div>
+
+                    
+                    <div style="display:flex; gap:8px; align-items:center;">
+                        <a href="#"
+                           style="background:#1a1a2e; color:white; text-decoration:none;
+                                  font-size:12px; font-weight:600; padding:7px 14px;
+                                  border-radius:8px; white-space:nowrap; display:inline-flex;
+                                  align-items:center; gap:5px;">
+                            <i class="bi bi-download" style="font-size:11px;"></i>
+                            Ticket
+                        </a>
+                    </div>
+
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div style="text-align:center; padding:4rem 2rem;">
+            <div style="width:72px; height:72px; background:#f3f4f6; border-radius:50%;
+                        display:flex; align-items:center; justify-content:center; margin:0 auto 1.25rem;">
+                <i class="bi bi-ticket" style="font-size:32px; color:#9ca3af;"></i>
+            </div>
+            <h3 style="font-size:17px; font-weight:600; color:#374151; margin:0 0 8px;">
+                No tickets yet
+            </h3>
+            <p style="font-size:14px; color:#6b7280; margin:0 0 1.5rem;">
+                You haven't booked any events yet. Explore our events and reserve your spot!
+            </p>
+            <a href="{{ path('app_public_event') }}"
+               style="background:#1a1a2e; color:white; text-decoration:none;
+                      font-size:14px; font-weight:600; padding:10px 24px;
+                      border-radius:8px; display:inline-block;">
+                Browse Events
+            </a>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

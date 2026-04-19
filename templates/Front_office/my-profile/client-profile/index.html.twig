@@ -1,0 +1,122 @@
+{% extends 'Front_office/my-profile/base.html.twig' %}
+
+{% block title %}My Profile — EventManage{% endblock %}
+
+{% block profile_content %}
+<div class="content-card">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 style="font-size:18px; font-weight:700; color:#1a1a2e; margin:0 0 4px;">
+                Personal Information
+            </h2>
+            <p style="font-size:13px; color:#6b7280; margin:0;">Your account details</p>
+        </div>
+        <a href="#"
+           style="font-size:13px; font-weight:600; color:#1a1a2e; text-decoration:none;
+                  border:1px solid #e5e7eb; padding:7px 16px; border-radius:8px; background:#f8f7f4;">
+            <i class="bi bi-pencil me-1" style="font-size:12px;"></i>Edit
+        </a>
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-md-6">
+            <div style="background:#f8f7f4; border-radius:10px; padding:1rem 1.25rem;">
+                <p style="font-size:11px; color:#9ca3af; text-transform:uppercase;
+                           letter-spacing:0.5px; margin:0 0 4px;">First Name</p>
+                <p style="font-size:15px; font-weight:600; color:#1a1a2e; margin:0;">
+                    {{ app.user.getFirstName() }}
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div style="background:#f8f7f4; border-radius:10px; padding:1rem 1.25rem;">
+                <p style="font-size:11px; color:#9ca3af; text-transform:uppercase;
+                           letter-spacing:0.5px; margin:0 0 4px;">Last Name</p>
+                <p style="font-size:15px; font-weight:600; color:#1a1a2e; margin:0;">
+                    {{ app.user.getLastName() }}
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div style="background:#f8f7f4; border-radius:10px; padding:1rem 1.25rem;">
+                <p style="font-size:11px; color:#9ca3af; text-transform:uppercase;
+                           letter-spacing:0.5px; margin:0 0 4px;">Email</p>
+                <p style="font-size:15px; font-weight:600; color:#1a1a2e; margin:0;">
+                    {{ app.user.getEmail() }}
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div style="background:#f8f7f4; border-radius:10px; padding:1rem 1.25rem;">
+                <p style="font-size:11px; color:#9ca3af; text-transform:uppercase;
+                           letter-spacing:0.5px; margin:0 0 4px;">Role</p>
+                <p style="font-size:15px; font-weight:600; color:#1a1a2e; margin:0;">
+                    {{ app.user.getRole() ? app.user.getRole().getLabel()|replace({'ROLE_': ''})|capitalize : 'User' }}
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div style="background:#f8f7f4; border-radius:10px; padding:1rem 1.25rem;">
+                <p style="font-size:11px; color:#9ca3af; text-transform:uppercase;
+                           letter-spacing:0.5px; margin:0 0 4px;">Member Since</p>
+                <p style="font-size:15px; font-weight:600; color:#1a1a2e; margin:0;">
+                    {{ app.user.getCreatedAt()|date('d F Y') }}
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div style="background:#f8f7f4; border-radius:10px; padding:1rem 1.25rem;">
+                <p style="font-size:11px; color:#9ca3af; text-transform:uppercase;
+                           letter-spacing:0.5px; margin:0 0 4px;">Email Status</p>
+                <p style="font-size:15px; font-weight:600; margin:0;">
+                    {% if app.user.isVerified() %}
+                        <span style="color:#3B6D11;">
+                            <i class="bi bi-patch-check-fill me-1"></i>Verified
+                        </span>
+                    {% else %}
+                        <span style="color:#92400e;">
+                            <i class="bi bi-exclamation-circle me-1"></i>Not verified
+                        </span>
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+    <div style="margin-top:2rem; padding-top:2rem; border-top:1px solid #f3f4f6;">
+        <h3 style="font-size:16px; font-weight:700; color:#1a1a2e; margin:0 0 1rem;">
+            Security
+        </h3>
+        <div class="d-flex align-items-center justify-content-between
+                    p-3 rounded-3" style="background:#f8f7f4; border:1px solid #e5e7eb;">
+            <div class="d-flex align-items-center gap-3">
+                <div style="width:40px; height:40px; background:white; border-radius:10px;
+                            border:1px solid #e5e7eb; display:flex; align-items:center;
+                            justify-content:center;">
+                    <i class="bi bi-lock" style="font-size:16px; color:#6b7280;"></i>
+                </div>
+                <div>
+                    <p style="font-size:14px; font-weight:600; color:#1a1a2e; margin:0;">Password</p>
+                    <p style="font-size:12px; color:#9ca3af; margin:0;">
+                        Last changed — unknown
+                    </p>
+                </div>
+            </div>
+            <a href="{{ path('app_forgot_password_request') }}"
+               style="font-size:13px; font-weight:600; color:#1a1a2e; text-decoration:none;
+                      border:1px solid #e5e7eb; padding:7px 14px; border-radius:8px; background:white;">
+                Change
+            </a>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

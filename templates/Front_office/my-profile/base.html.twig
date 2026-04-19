@@ -1,0 +1,346 @@
+{% extends 'Front_office/base.html.twig' %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .profile-page { background: #f8f7f4; min-height: 100vh; }
+
+    .profile-hero {
+        background: #1a1a2e;
+        padding: 2.5rem 1.5rem 5rem;
+    }
+
+    .profile-card-wrapper {
+        margin-top: -60px;
+        padding: 0 1.5rem 3rem;
+    }
+
+    .profile-main-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        overflow: hidden;
+    }
+
+    .profile-info-section {
+        padding: 1.5rem 2rem;
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+        border-bottom: 1px solid #f3f4f6;
+    }
+
+    .avatar-circle {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        border: 3px solid white;
+        box-shadow: 0 0 0 3px #1a1a2e;
+        object-fit: cover;
+        flex-shrink: 0;
+    }
+
+    .avatar-initials {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: #1a1a2e;
+        border: 3px solid white;
+        box-shadow: 0 0 0 3px #e5e7eb;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        font-weight: 700;
+        color: white;
+        flex-shrink: 0;
+    }
+
+    .verified-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: #EAF3DE;
+        color: #3B6D11;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 20px;
+    }
+
+    .unverified-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: #fef3c7;
+        color: #92400e;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 20px;
+    }
+
+    .role-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: #EEEDFE;
+        color: #534AB7;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 20px;
+    }
+
+    /* Sidebar nav */
+    .profile-nav {
+        display: flex;
+        flex-direction: row;
+        gap: 4px;
+        padding: 1rem;
+    }
+
+    .profile-nav-link {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        border-radius: 10px;
+        text-decoration: none;
+        color: #374151;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+
+    .profile-nav-link:hover {
+        background: #f8f7f4;
+        color: #1a1a2e;
+    }
+
+    .profile-nav-link.active {
+        background: #1a1a2e;
+        color: white;
+    }
+
+    .profile-nav-link .nav-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 14px;
+    }
+
+    .profile-nav-link.active .nav-icon {
+        background: rgba(255,255,255,0.15);
+        color: white;
+    }
+
+    .profile-nav-link:not(.active) .nav-icon {
+        background: #f3f4f6;
+        color: #6b7280;
+    }
+
+    .profile-nav-link:not(.active):hover .nav-icon {
+        background: #e5e7eb;
+        color: #1a1a2e;
+    }
+
+    .nav-count {
+        margin-left: auto;
+        background: rgba(255,255,255,0.2);
+        color: white;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 10px;
+    }
+
+    .profile-nav-link:not(.active) .nav-count {
+        background: #f3f4f6;
+        color: #6b7280;
+    }
+
+    .nav-divider {
+        height: 1px;
+        background: #f3f4f6;
+        margin: 6px 14px;
+    }
+
+    .stat-pill {
+        background: #f8f7f4;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 10px 16px;
+        text-align: center;
+        flex: 1;
+    }
+
+    .content-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        padding: 2rem;
+    }
+
+    
+
+    @media (max-width: 768px) {
+        .profile-info-section { flex-direction: column; text-align: center; }
+        .profile-nav { flex-direction: row; flex-wrap: wrap; overflow-x: auto; }
+        .profile-nav-link { flex-direction: column; gap: 4px; font-size: 12px; padding: 8px 10px; }
+        .nav-count { display: none; }
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="profile-page">
+
+    <section class="profile-hero" >
+        <div class="container">
+            <p style="color:rgba(255,255,255,0.55); font-size:13px; margin:0;">
+                Welcome back,
+                <span style="color:white; font-weight:600;">
+                    {{ app.user.getFirstName() }} {{ app.user.getLastName() }}
+                </span>
+            </p>
+        </div>
+    </section>
+
+    <div class="profile-card-wrapper">
+        <div class="container">
+            <div class="profile-main-card mb-4">
+
+                <div class="profile-info-section">
+
+                    {% if app.user.getAvatar() %}
+                        <img src="{{ asset('uploads/avatars/' ~ app.user.getAvatar()) }}"
+                             alt="Avatar"
+                             class="avatar-circle">
+                    {% else %}
+                        <div class="avatar-initials">
+                            {{ app.user.getFirstName()|first|upper }}{{ app.user.getLastName()|first|upper }}
+                        </div>
+                    {% endif %}
+
+                    <div style="flex:1; min-width:0;">
+                        <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
+                            <h1 style="font-size:20px; font-weight:700; color:#1a1a2e; margin:0;">
+                                {{ app.user.getFirstName() }} {{ app.user.getLastName() }}
+                            </h1>
+                            {% if app.user.isVerified() %}
+                                <span class="verified-badge">
+                                    <i class="bi bi-patch-check-fill" style="font-size:11px;"></i>
+                                    Verified
+                                </span>
+                            {% else %}
+                                <span class="unverified-badge">
+                                    <i class="bi bi-exclamation-circle" style="font-size:11px;"></i>
+                                    Not verified
+                                </span>
+                            {% endif %}
+                            {% if app.user.getRole() %}
+                                <span class="role-badge">
+                                    <i class="bi bi-person-badge" style="font-size:11px;"></i>
+                                    {{ app.user.getRole().getLabel()|replace({'ROLE_': ''})|capitalize }}
+                                </span>
+                            {% endif %}
+                        </div>
+                        <p style="font-size:13px; color:#6b7280; margin:0 0 10px;">
+                            <i class="bi bi-envelope me-1"></i>{{ app.user.getEmail() }}
+                            &nbsp;·&nbsp;
+                            <i class="bi bi-calendar3 me-1"></i>
+                            Member since {{ app.user.getCreatedAt()|date('M Y') }}
+                        </p>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <div class="stat-pill">
+                                <p style="font-size:18px; font-weight:700; color:#1a1a2e; margin:0;">
+                                    {{ app.user.getEvents()|length }}
+                                </p>
+                                <p style="font-size:11px; color:#6b7280; margin:0;">Events</p>
+                            </div>
+                            <div class="stat-pill">
+                                <p style="font-size:18px; font-weight:700; color:#1a1a2e; margin:0;">
+                                    {{ tickets_count is defined ? tickets_count : 0 }}
+                                </p>
+                                <p style="font-size:11px; color:#6b7280; margin:0;">Tickets</p>
+                            </div>
+                            <div class="stat-pill">
+                                <p style="font-size:18px; font-weight:700; color:#1a1a2e; margin:0;">
+                                    {{ app.user.getCreatedAt()|date('Y') }}
+                                </p>
+                                <p style="font-size:11px; color:#6b7280; margin:0;">Joined</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-column gap-2 align-self-start">
+                        <a href="#"
+                           style="background:#1a1a2e; color:white; text-decoration:none;
+                                  font-size:13px; font-weight:600; padding:8px 18px;
+                                  border-radius:8px; white-space:nowrap; display:inline-flex;
+                                  align-items:center; gap:6px;">
+                            <i class="bi bi-pencil" style="font-size:12px;"></i>
+                            Edit Profile
+                        </a>
+                        {% if not app.user.isVerified() %}
+                            <a href="{{ path('app_verify_email') }}"
+                               style="background:#fef3c7; color:#92400e; text-decoration:none;
+                                      font-size:12px; font-weight:600; padding:7px 14px;
+                                      border-radius:8px; white-space:nowrap; text-align:center;">
+                                <i class="bi bi-envelope-check me-1" style="font-size:11px;"></i>
+                                Verify Email
+                            </a>
+                        {% endif %}
+                    </div>
+
+                </div>
+
+                <div class="profile-nav">
+
+                    {% set currentRoute = app.request.attributes.get('_route') %}
+
+                    <a href="{{ path('app_my_profile') }}"
+                       class="profile-nav-link {{ currentRoute == 'app_my_profile' ? 'active' : '' }}">
+                        <span class="nav-icon">
+                            <i class="bi bi-person"></i>
+                        </span>
+                        My Information
+                    </a>
+
+                    <a href="{{ path('app_event_index') }}"
+                       class="profile-nav-link {{ currentRoute == 'app_event_index' ? 'active' : '' }}">
+                        <span class="nav-icon">
+                            <i class="bi bi-calendar3"></i>
+                        </span>
+                        My Events
+                        <span class="nav-count">{{ app.user.getEvents()|length }}</span>
+                    </a>
+
+                    <a href="{{ path('app_my_profile_tickets') }}"
+                       class="profile-nav-link {{ currentRoute == 'app_my_profile_tickets' ? 'active' : '' }}">
+                        <span class="nav-icon">
+                            <i class="bi bi-ticket"></i>
+                        </span>
+                        My Tickets
+                        <span class="nav-count">{{ tickets_count is defined ? tickets_count : 0 }}</span>
+                    </a>
+
+                   
+
+            </div>
+
+            <div class="content-card">
+                {% block profile_content %}
+                {% endblock %}
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
