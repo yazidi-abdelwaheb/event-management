@@ -57,7 +57,7 @@ final class EventController extends AbstractController
             $event->setOrganizer($this->getUser());
             $entityManager->persist($event);
             $entityManager->flush();
-
+            $this->addFlash('success', 'Event "' . $event->getTitle() . '" created successfully!');
             return $this->redirectToRoute('app_event_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -80,14 +80,47 @@ final class EventController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_event_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Event $event, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Event $event, EntityManagerInterface $entityManager , SluggerInterface $slugger): Response
     {
+        if ($event->getOrganizer() !== $this->getUser()) {
+            throw $this->createAccessDeniedException('You cannot edit this event.');
+        }
         $form = $this->createForm(EventType::class, $event);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
+            $imageFile = $form->get('imageFile')->getData();
 
+            if ($imageFile) {
+                $oldImage = $event->getImage();
+                if ($oldImage) {
+                    $oldPath = $this->getParameter('events_images_directory') . '/' . $oldImage;
+                    if (file_exists($oldPath)) {
+                        unlink($oldPath);
+                    }
+                }
+
+                $originalFilename = pathinfo(
+                    $imageFile->getClientOriginalName(),
+                    PATHINFO_FILENAME
+                );
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename  = $safeFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
+
+                try {
+                    $imageFile->move(
+                        $this->getParameter('events_images_directory'),
+                        $newFilename
+                    );
+                    $event->setImage($newFilename);
+                } catch (FileException $e) {
+                    $this->addFlash('danger', 'Image upload failed: ' . $e->getMessage());
+                    return $this->redirectToRoute('app_event_edit', ['id' => $event->getId()]);
+                }
+            }
+
+            $entityManager->flush();
+            $this->addFlash('success', 'Event "' . $event->getTitle() . '" updated successfully!');
             return $this->redirectToRoute('app_event_index', [], Response::HTTP_SEE_OTHER);
         }
 

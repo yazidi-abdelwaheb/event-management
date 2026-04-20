@@ -458,9 +458,9 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('modal-end-row').style.display = ev.end ? 'flex' : 'none';
             document.getElementById('modal-loc').textContent      = p.location || '';
             document.getElementById('modal-loc-row').style.display = p.location ? 'flex' : 'none';
-            document.getElementById('modal-price').textContent    = p.price == 0 ? 'Gratuit' : p.price + ' TND';
+            document.getElementById('modal-price').textContent    = p.price == 0 ? 'Free' : p.price + ' TND';
             document.getElementById('modal-price').style.color    = p.price == 0 ? '#3B6D11' : '#1a1a2e';
-            document.getElementById('modal-desc').textContent     = p.description || 'Aucune description.';
+            document.getElementById('modal-desc').textContent     = p.description || 'No description available.';
             document.getElementById('modal-top-bar').style.background = catColors[p.category] || '#1a1a2e';
 
             const reserveBtn = document.getElementById('modal-reserve-btn');

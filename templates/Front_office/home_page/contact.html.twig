@@ -166,7 +166,7 @@
                             Fill out the form and we'll get back to you within 24 hours.
                         </p>
 
-                        <form>
+                        <form method="post">
                             <div class="row g-3 mb-3">
                                 <div class="col-sm-6">
                                     <label class="form-label">First Name</label>
@@ -174,7 +174,7 @@
                                         <span class="input-group-text">
                                             <i class="bi bi-person" style="font-size:14px;"></i>
                                         </span>
-                                        <input type="text" class="form-control"
+                                        <input type="text" class="form-control" name="first_name"
                                                placeholder="Your first name" required>
                                     </div>
                                 </div>
@@ -184,7 +184,7 @@
                                         <span class="input-group-text">
                                             <i class="bi bi-person" style="font-size:14px;"></i>
                                         </span>
-                                        <input type="text" class="form-control"
+                                        <input type="text" class="form-control" name="last_name"
                                                placeholder="Your last name" required>
                                     </div>
                                 </div>
@@ -196,7 +196,7 @@
                                     <span class="input-group-text">
                                         <i class="bi bi-envelope" style="font-size:14px;"></i>
                                     </span>
-                                    <input type="email" class="form-control"
+                                    <input type="email" class="form-control" name="email"
                                            placeholder="you@example.com" required>
                                 </div>
                             </div>
@@ -207,7 +207,7 @@
                                     <span class="input-group-text">
                                         <i class="bi bi-chat-dots" style="font-size:14px;"></i>
                                     </span>
-                                    <select class="form-select" style="border-left:none !important;">
+                                    <select class="form-select" style="border-left:none !important;" name="subject">
                                         <option value="">Choose a subject</option>
                                         <option>Event Booking</option>
                                         <option>Technical Issue</option>
@@ -221,9 +221,10 @@
                             <div class="mb-4">
                                 <label class="form-label">Message</label>
                                 <textarea class="form-control"
-                                          rows="5"
-                                          placeholder="Describe your request in detail..."
-                                          required></textarea>
+                                        name="message"
+                                        rows="5"
+                                        placeholder="Describe your request in detail..."
+                                        required></textarea>
                             </div>
 
                             <div class="d-grid">

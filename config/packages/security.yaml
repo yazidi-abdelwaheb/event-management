@@ -30,9 +30,9 @@ security:
             lazy: true
             provider: app_user_provider
             form_login:
-                login_path: app_login 
+                login_path: app_login
                 check_path: app_login
-                default_target_path: app_home_page
+                default_target_path: app_my_profile
                 enable_csrf: true
             logout:
                 path: app_logout
@@ -41,6 +41,7 @@ security:
     access_control:
         - { path: ^/admin/login, roles: PUBLIC_ACCESS }
         - { path: ^/admin,       roles: ROLE_ADMIN }
+        - { path: ^/my-profile,  roles: ROLE_CLIENT }
 
 when@test:
     security:

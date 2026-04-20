@@ -203,9 +203,9 @@
 
     <section class="profile-hero" >
         <div class="container">
-            <p style="color:rgba(255,255,255,0.55); font-size:13px; margin:0;">
+            <p style="color:rgba(255,255,255,0.55); font-size:20px;">
                 Welcome back,
-                <span style="color:white; font-weight:600;">
+                <span style="color:white; font-weight:700;">
                     {{ app.user.getFirstName() }} {{ app.user.getLastName() }}
                 </span>
             </p>
@@ -280,7 +280,7 @@
                     </div>
 
                     <div class="d-flex flex-column gap-2 align-self-start">
-                        <a href="#"
+                        <a href="{{ path('app_my_profile_edit') }}"
                            style="background:#1a1a2e; color:white; text-decoration:none;
                                   font-size:13px; font-weight:600; padding:8px 18px;
                                   border-radius:8px; white-space:nowrap; display:inline-flex;
@@ -335,7 +335,7 @@
 
             </div>
 
-            <div class="content-card">
+            <div class="content-card position-relative">
                 {% block profile_content %}
                 {% endblock %}
             </div>

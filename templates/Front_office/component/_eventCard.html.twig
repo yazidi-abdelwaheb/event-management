@@ -96,7 +96,7 @@
 
 
 
-<div class="col-md-4 col-sm-6">
+<div class="col-md-4 col-sm-6 col-12">
     <div class="event-card h-100" >
 
         <div class="event-thumb" style="background:#1a1a2e;">
@@ -169,7 +169,7 @@
             </div>
 
             <div class="mt-auto">
-                <a href="{{ path('app_public_event_subscribe', { id: event.id }) }}" class="btn-reserve">
+                <a href="{{ path('app_public_event_subscribe', { id: event.id }) }}" class="btn-reserve {% if event.subscribedCount >= event.capacity or event.status.label() == 'Completed' %}disabled{% endif %}">
                     <i class="bi bi-ticket me-1" style="font-size:12px;"></i>
                     Subscribe
                 </a>

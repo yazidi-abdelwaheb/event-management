@@ -2,8 +2,10 @@
 
 namespace App\Controller\Front_office;
 
+use App\Entity\Comment;
 use App\Entity\Event;
 use App\Entity\EventSubscribe;
+use App\Form\CommentType;
 use App\Form\EventSubscribeType;
 use App\Repository\EventRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -36,11 +38,32 @@ final class PublicEventController extends AbstractController
         ]);
     }
 
-    #[Route('/event/{id}', name: 'app_public_event_show')]
-    public function show(Event $event): Response
-    {
+
+
+    #[Route('/event/{id}', name: 'app_public_event_show', methods: ['GET', 'POST'])]
+    public function show(
+        Event $event,
+        Request $request,
+        EntityManagerInterface $em
+    ): Response {
+        $comment = new Comment();
+        $form    = $this->createForm(CommentType::class, $comment);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $comment->setEvent($event);
+            $comment->setUser($this->getUser()? $this->getUser() : null);
+            $em->persist($comment);
+            $em->flush();
+
+            $this->addFlash('success', 'Comment added successfully!');
+            return $this->redirectToRoute('app_public_event_show', ['id' => $event->getId()]);
+        }
+
         return $this->render('Front_office/public_event/show.html.twig', [
-            'event' => $event,
+            'event'        => $event,
+            'commentForm'  => $form,
+            'comments'     => $event->getComments(), // ← relation OneToMany
         ]);
     }
 

@@ -3,13 +3,13 @@
 
 {% block content %}
     <div class="container my-4">
-        <h1>Bienvenue dans le Dashboard</h1>
+        <h1>Welcome Back <span class="fw-bold"> {{app.user.firstName }} </span></h1>
 
         <div class="row">
             <div class="col-md-4">
                 <div class="card text-white bg-primary mb-3">
                     <div class="card-body">
-                        <h5 class="card-title">Nombre d’utilisateurs</h5>
+                        <h5 class="card-title">Users Count</h5>
                         <p class="card-text">{{ "50" }}</p>
                     </div>
                 </div>
@@ -17,7 +17,7 @@
             <div class="col-md-4">
                 <div class="card text-white bg-success mb-3">
                     <div class="card-body">
-                        <h5 class="card-title">Nombre d’événements</h5>
+                        <h5 class="card-title">Events Count</h5>
                         <p class="card-text">{{ "25" }}</p>
                     </div>
                 </div>

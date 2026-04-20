@@ -78,6 +78,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::section('Administration management');
         yield MenuItem::linkTo(UserCrudController::class, 'Users', 'fas fa-users');
         yield MenuItem::linkTo(RoleCrudController::class, 'Roles', 'fas fa-user-tag');
+        yield MenuItem::linkToRoute('Contact Messages', 'fa fa-envelope-open-text','admin_inbox');
         yield MenuItem::section('Event management');
         yield MenuItem::linkTo(EventCrudController::class, 'Events', 'fas fa-calendar');
         yield MenuItem::linkTo(CategoryCrudController::class, 'Categories', 'fas fa-tags');

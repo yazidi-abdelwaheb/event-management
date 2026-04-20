@@ -1,528 +1,554 @@
 {% extends 'Front_office/my-profile/base.html.twig' %}
 
-{% block title %}New Event — EventManage{% endblock %}
+{% block title %}Edit Event — EventManage{% endblock %}
 
 {% block stylesheets %}
 {{ parent() }}
 <style>
-    .new-event-page { background: #f8f7f4; min-height: 100vh; }
-
-    .page-hero {
-        background: #1a1a2e;
-        padding: 2.5rem 1.5rem;
-    }
-
-    .form-card {
-        background: white;
-        border: 1px solid #e5e7eb;
-        border-radius: 16px;
-        padding: 2rem;
-    }
-
-    .form-section-title {
-        font-size: 14px;
-        font-weight: 700;
-        color: #1a1a2e;
-        margin: 0 0 1rem;
-        padding-bottom: 8px;
-        border-bottom: 2px solid #f3f4f6;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
+    
     .form-section-icon {
-        width: 28px;
-        height: 28px;
-        background: #1a1a2e;
-        border-radius: 6px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        width: 28px; height: 28px;
+        background: #1a1a2e; border-radius: 6px;
+        display: flex; align-items: center; justify-content: center;
         flex-shrink: 0;
     }
-
-    .form-label {
-        font-size: 13px !important;
-        font-weight: 600 !important;
-        color: #374151 !important;
-        margin-bottom: 6px !important;
-    }
-
     .input-group-text {
-        background: #fafafa !important;
+        background: #f9fafb !important;
         border-color: #e5e7eb !important;
         color: #9ca3af !important;
     }
-
     .form-control, .form-select {
-        background: #fafafa !important;
+        background: #f9fafb !important;
         border-color: #e5e7eb !important;
+        border-left: none !important;
         font-size: 14px !important;
         color: #111827 !important;
-        border-left: none !important;
     }
-
     .form-control:focus, .form-select:focus {
         border-color: #1a1a2e !important;
         box-shadow: none !important;
         background: #fff !important;
     }
-
-    .input-group:focus-within .input-group-text {
-        border-color: #1a1a2e !important;
-    }
-
-    textarea.form-control {
-        border-left: 1px solid #e5e7eb !important;
-        resize: vertical;
-    }
+    .input-group:focus-within .input-group-text { border-color: #1a1a2e !important; }
+    textarea.form-control { border-left: 1px solid #e5e7eb !important; }
     textarea.form-control:focus { border-color: #1a1a2e !important; }
-
     .form-control.is-invalid { border-color: #dc2626 !important; }
-    .invalid-feedback { font-size: 12px !important; color: #dc2626 !important; }
 
     .image-upload-zone {
         border: 2px dashed #d1d5db;
         border-radius: 12px;
-        padding: 2rem;
-        text-align: center;
         cursor: pointer;
         transition: all 0.2s;
         position: relative;
     }
-    .image-upload-zone:hover {
-        border-color: #1a1a2e;
-        background: #f8f7f4;
-    }
+    .image-upload-zone:hover { border-color: #1a1a2e; background: #f8f7f4; }
     .image-upload-zone input[type="file"] {
-        position: absolute;
-        inset: 0;
-        opacity: 0;
-        cursor: pointer;
-        width: 100%;
-        height: 100%;
+        position: absolute; inset: 0;
+        opacity: 0; cursor: pointer;
+        width: 100%; height: 100%;
     }
-
     #image-preview {
-        max-height: 200px;
-        border-radius: 10px;
-        object-fit: cover;
-        width: 100%;
-        display: none;
-        margin-top: 1rem;
+        max-height: 200px; border-radius: 10px;
+        object-fit: cover; width: 100%;
+        display: none; margin-top: 1rem;
     }
-
     .btn-submit {
         background: #1a1a2e !important;
         border: none !important;
-        border-radius: 8px !important;
-        font-size: 15px !important;
-        font-weight: 600 !important;
-        padding: 12px 32px !important;
         transition: opacity 0.2s !important;
     }
     .btn-submit:hover { opacity: 0.85; }
 
-    .btn-cancel {
-        background: #f3f4f6;
-        border: none;
-        border-radius: 8px;
-        font-size: 15px;
-        font-weight: 600;
-        padding: 12px 24px;
-        color: #374151;
-        text-decoration: none;
-        transition: background 0.2s;
-        display: inline-block;
+    /* Preview card */
+    .event-thumb {
+        height: 160px; position: relative; overflow: hidden;
+        background: #1a1a2e;
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
     }
-    .btn-cancel:hover { background: #e5e7eb; color: #1a1a2e; }
-
-    .breadcrumb-item a {
-        color: rgba(255,255,255,0.6);
-        text-decoration: none;
-        font-size: 13px;
+    .event-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .event-badge {
+        position: absolute; top: 10px; left: 10px;
+        font-size: 11px; font-weight: 700;
+        padding: 3px 10px; border-radius: 6px;
+        background: #EAF3DE; color: #3B6D11;
     }
-    .breadcrumb-item a:hover { color: white; }
-    .breadcrumb-item.active { color: rgba(255,255,255,0.9); font-size: 13px; }
-
-    .tip-box {
-        background: #f0f9ff;
-        border: 1px solid #bae6fd;
-        border-radius: 10px;
-        padding: 1rem 1.25rem;
+    .event-price {
+        position: absolute; top: 10px; right: 10px;
+        background: white; color: #1a1a2e;
+        font-size: 12px; font-weight: 700;
+        padding: 3px 10px; border-radius: 6px;
+    }
+    .meta-row { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+    .meta-text { font-size: 12px; color: #6b7280; margin: 0; }
+    .btn-reserve {
+        display: block; text-align: center;
+        background: #1a1a2e; color: white !important;
+        text-decoration: none; font-size: 13px;
+        font-weight: 600; padding: 9px; border-radius: 8px;
     }
 </style>
 {% endblock %}
 
 {% block profile_content %}
-<div class="new-event-page">
+<div style="background:#f8f7f4; min-height:100vh;">
 
-    <section class="page-hero">
+    <section style="background:#1a1a2e;" class="py-4 px-3 mb-4">
         <div class="container">
-           
-            <h1 style="color:white; font-size:26px; font-weight:700; margin:0 0 4px;">
-                Edit Event
-            </h1>
-            <p style="color:rgba(255,255,255,0.6); font-size:13px; margin:0;">
+            <h1 class="text-white fw-bold mb-1" style="font-size:24px;">Edit Event</h1>
+            <p class="mb-0" style="color:rgba(255,255,255,0.6); font-size:13px;">
                 Update the details below to modify your event
             </p>
         </div>
     </section>
 
-    <section style="padding:2.5rem 1.5rem;">
-        <div class="container">
-            <div class="row g-4">
+    <div class="container pb-5">
+        <div class="row g-4">
 
-                <div class="col-lg-8">
+            <div class="col-lg-8">
 
-                    {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'enctype': 'multipart/form-data'}}) }}
+                {{ form_start(form, {
+                    'attr': {
+                        'novalidate': 'novalidate',
+                        'enctype': 'multipart/form-data',
+                        'id': 'event-form'
+                    }
+                }) }}
 
-                    <div class="form-card mb-4">
-                        <div class="form-section-title">
-                            <div class="form-section-icon">
-                                <i class="bi bi-info-circle" style="font-size:13px; color:white;"></i>
-                            </div>
-                            General Information
+                <div class="bg-white border rounded-3 p-4 mb-4">
+                    <div class="d-flex align-items-center gap-2 pb-2 mb-3"
+                         style="border-bottom:2px solid #f3f4f6; font-size:14px; font-weight:700; color:#1a1a2e;">
+                        <div class="form-section-icon">
+                            <i class="bi bi-info-circle text-white" style="font-size:13px;"></i>
                         </div>
+                        General Information
+                    </div>
 
-                        <div class="mb-3">
-                            {{ form_label(form.title) }}
-                            <div class="input-group">
-                                <span class="input-group-text">
-                                    <i class="bi bi-pencil" style="font-size:14px;"></i>
-                                </span>
-                                {{ form_widget(form.title, {
-                                    'attr': {
-                                        'class': 'form-control' ~ (form.title.vars.errors|length ? ' is-invalid' : ''),
-                                        'placeholder': 'Enter your event title'
-                                    }
-                                }) }}
-                                {% if form.title.vars.errors|length %}
-                                    <div class="invalid-feedback d-block">
-                                        {% for error in form.title.vars.errors %}{{ error.message }}{% endfor %}
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            {{ form_label(form.description) }}
-                            {{ form_widget(form.description, {
+                    <div class="mb-3">
+                        {{ form_label(form.title, null, {'label_attr': {'class': 'form-label fw-semibold text-secondary', 'style': 'font-size:13px;'}}) }}
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-pencil" style="font-size:14px;"></i>
+                            </span>
+                            {{ form_widget(form.title, {
                                 'attr': {
-                                    'class': 'form-control' ~ (form.description.vars.errors|length ? ' is-invalid' : ''),
-                                    'placeholder': 'Describe your event in detail...',
-                                    'rows': 5
+                                    'class': 'form-control' ~ (form.title.vars.errors|length ? ' is-invalid' : ''),
+                                    'placeholder': 'Enter your event title',
+                                    'oninput': 'syncTitle(this.value)'
                                 }
                             }) }}
-                            {% if form.description.vars.errors|length %}
-                                <div class="invalid-feedback d-block">
-                                    {% for error in form.description.vars.errors %}{{ error.message }}{% endfor %}
+                        </div>
+                        {% if form.title.vars.errors|length %}
+                            <div class="text-danger mt-1" style="font-size:12px;">
+                                {% for e in form.title.vars.errors %}{{ e.message }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_label(form.description, null, {'label_attr': {'class': 'form-label fw-semibold text-secondary', 'style': 'font-size:13px;'}}) }}
+                        {{ form_widget(form.description, {
+                            'attr': {
+                                'class': 'form-control' ~ (form.description.vars.errors|length ? ' is-invalid' : ''),
+                                'placeholder': 'Describe your event in detail...',
+                                'rows': 5
+                            }
+                        }) }}
+                        {% if form.description.vars.errors|length %}
+                            <div class="text-danger mt-1" style="font-size:12px;">
+                                {% for e in form.description.vars.errors %}{{ e.message }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-0">
+                        {{ form_label(form.category, null, {'label_attr': {'class': 'form-label fw-semibold text-secondary', 'style': 'font-size:13px;'}}) }}
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-tag" style="font-size:14px;"></i>
+                            </span>
+                            {{ form_widget(form.category, {
+                                'attr': {
+                                    'class': 'form-select' ~ (form.category.vars.errors|length ? ' is-invalid' : ''),
+                                    'onchange': 'syncCategory(this)'
+                                }
+                            }) }}
+                        </div>
+                        {% if form.category.vars.errors|length %}
+                            <div class="text-danger mt-1" style="font-size:12px;">
+                                {% for e in form.category.vars.errors %}{{ e.message }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="bg-white border rounded-3 p-4 mb-4">
+                    <div class="d-flex align-items-center gap-2 pb-2 mb-3"
+                         style="border-bottom:2px solid #f3f4f6; font-size:14px; font-weight:700; color:#1a1a2e;">
+                        <div class="form-section-icon">
+                            <i class="bi bi-calendar3 text-white" style="font-size:13px;"></i>
+                        </div>
+                        Date, Time & Location
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            {{ form_label(form.start_date_time, null, {'label_attr': {'class': 'form-label fw-semibold text-secondary', 'style': 'font-size:13px;'}}) }}
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="bi bi-play-circle" style="font-size:14px;"></i>
+                                </span>
+                                {{ form_widget(form.start_date_time, {
+                                    'attr': {
+                                        'class': 'form-control' ~ (form.start_date_time.vars.errors|length ? ' is-invalid' : ''),
+                                        'onchange': 'syncDate(this.value)'
+                                    }
+                                }) }}
+                            </div>
+                            {% if form.start_date_time.vars.errors|length %}
+                                <div class="text-danger mt-1" style="font-size:12px;">
+                                    {% for e in form.start_date_time.vars.errors %}{{ e.message }}{% endfor %}
                                 </div>
                             {% endif %}
                         </div>
-
-                        <div class="mb-0">
-                            {{ form_label(form.category) }}
+                        <div class="col-md-6">
+                            {{ form_label(form.end_date_time, null, {'label_attr': {'class': 'form-label fw-semibold text-secondary', 'style': 'font-size:13px;'}}) }}
                             <div class="input-group">
                                 <span class="input-group-text">
-                                    <i class="bi bi-tag" style="font-size:14px;"></i>
+                                    <i class="bi bi-stop-circle" style="font-size:14px;"></i>
                                 </span>
-                                {{ form_widget(form.category, {
+                                {{ form_widget(form.end_date_time, {
                                     'attr': {
-                                        'class': 'form-select' ~ (form.category.vars.errors|length ? ' is-invalid' : '')
+                                        'class': 'form-control' ~ (form.end_date_time.vars.errors|length ? ' is-invalid' : '')
                                     }
                                 }) }}
-                                {% if form.category.vars.errors|length %}
-                                    <div class="invalid-feedback d-block">
-                                        {% for error in form.category.vars.errors %}{{ error.message }}{% endfor %}
-                                    </div>
-                                {% endif %}
                             </div>
+                            {% if form.end_date_time.vars.errors|length %}
+                                <div class="text-danger mt-1" style="font-size:12px;">
+                                    {% for e in form.end_date_time.vars.errors %}{{ e.message }}{% endfor %}
+                                </div>
+                            {% endif %}
                         </div>
-
                     </div>
 
-                    <div class="form-card mb-4">
-                        <div class="form-section-title">
-                            <div class="form-section-icon">
-                                <i class="bi bi-calendar3" style="font-size:13px; color:white;"></i>
-                            </div>
-                            Date, Time & Location
-                        </div>
-
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-6">
-                                {{ form_label(form.start_date_time) }}
-                                <div class="input-group">
-                                    <span class="input-group-text">
-                                        <i class="bi bi-play-circle" style="font-size:14px;"></i>
-                                    </span>
-                                    {{ form_widget(form.start_date_time, {
-                                        'attr': {
-                                            'class': 'form-control' ~ (form.start_date_time.vars.errors|length ? ' is-invalid' : '')
-                                        }
-                                    }) }}
-                                </div>
-                                {% if form.start_date_time.vars.errors|length %}
-                                    <div class="invalid-feedback d-block">
-                                        {% for error in form.start_date_time.vars.errors %}{{ error.message }}{% endfor %}
-                                    </div>
-                                {% endif %}
-                            </div>
-                            <div class="col-md-6">
-                                {{ form_label(form.end_date_time) }}
-                                <div class="input-group">
-                                    <span class="input-group-text">
-                                        <i class="bi bi-stop-circle" style="font-size:14px;"></i>
-                                    </span>
-                                    {{ form_widget(form.end_date_time, {
-                                        'attr': {
-                                            'class': 'form-control' ~ (form.end_date_time.vars.errors|length ? ' is-invalid' : '')
-                                        }
-                                    }) }}
-                                </div>
-                                {% if form.end_date_time.vars.errors|length %}
-                                    <div class="invalid-feedback d-block">
-                                        {% for error in form.end_date_time.vars.errors %}{{ error.message }}{% endfor %}
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <div class="mb-0">
-                            {{ form_label(form.location) }}
-                            <div class="input-group">
-                                <span class="input-group-text">
-                                    <i class="bi bi-geo-alt" style="font-size:14px;"></i>
-                                </span>
-                                {{ form_widget(form.location, {
-                                    'attr': {
-                                        'class': 'form-control' ~ (form.location.vars.errors|length ? ' is-invalid' : ''),
-                                        'placeholder': 'Venue name or full address'
-                                    }
-                                }) }}
-                                {% if form.location.vars.errors|length %}
-                                    <div class="invalid-feedback d-block">
-                                        {% for error in form.location.vars.errors %}{{ error.message }}{% endfor %}
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div class="form-card mb-4">
-                        <div class="form-section-title">
-                            <div class="form-section-icon">
-                                <i class="bi bi-people" style="font-size:13px; color:white;"></i>
-                            </div>
-                            Capacity & Pricing
-                        </div>
-
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                {{ form_label(form.capacity) }}
-                                <div class="input-group">
-                                    <span class="input-group-text">
-                                        <i class="bi bi-people" style="font-size:14px;"></i>
-                                    </span>
-                                    {{ form_widget(form.capacity, {
-                                        'attr': {
-                                            'class': 'form-control' ~ (form.capacity.vars.errors|length ? ' is-invalid' : ''),
-                                            'placeholder': '100'
-                                        }
-                                    }) }}
-                                    {% if form.capacity.vars.errors|length %}
-                                        <div class="invalid-feedback d-block">
-                                            {% for error in form.capacity.vars.errors %}{{ error.message }}{% endfor %}
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                {{ form_label(form.price) }}
-                                <div class="input-group">
-                                    <span class="input-group-text">
-                                        <span style="font-size:12px; font-weight:700;">TND</span>
-                                    </span>
-                                    {{ form_widget(form.price, {
-                                        'attr': {
-                                            'class': 'form-control' ~ (form.price.vars.errors|length ? ' is-invalid' : ''),
-                                            'placeholder': '0.00'
-                                        }
-                                    }) }}
-                                    {% if form.price.vars.errors|length %}
-                                        <div class="invalid-feedback d-block">
-                                            {% for error in form.price.vars.errors %}{{ error.message }}{% endfor %}
-                                        </div>
-                                    {% endif %}
-                                </div>
-                                <p style="font-size:11px; color:#9ca3af; margin:4px 0 0;">
-                                    Set to 0 for a free event
-                                </p>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div class="form-card mb-4">
-                        <div class="form-section-title">
-                            <div class="form-section-icon">
-                                <i class="bi bi-image" style="font-size:13px; color:white;"></i>
-                            </div>
-                            Event Image
-                        </div>
-
-                        <div class="image-upload-zone" id="upload-zone">
-                            {{ form_widget(form.imageFile, {
+                    <div>
+                        {{ form_label(form.location, null, {'label_attr': {'class': 'form-label fw-semibold text-secondary', 'style': 'font-size:13px;'}}) }}
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-geo-alt" style="font-size:14px;"></i>
+                            </span>
+                            {{ form_widget(form.location, {
                                 'attr': {
-                                    'name': 'imageFile',
-                                    'accept': 'image/jpeg,image/png,image/webp',
-                                    'onchange': 'previewImage(this)',
-                                    'value': event.getImage() ? asset('uploads/events/' ~ event.getImage()) : ''
+                                    'class': 'form-control' ~ (form.location.vars.errors|length ? ' is-invalid' : ''),
+                                    'placeholder': 'Venue name or full address',
+                                    'oninput': 'syncLocation(this.value)'
                                 }
                             }) }}
-                            <div id="upload-placeholder">
-                                <i class="bi bi-cloud-upload"
-                                   style="font-size:36px; color:#d1d5db; display:block; margin-bottom:8px;"></i>
-                                <p style="font-size:14px; font-weight:600; color:#374151; margin:0 0 4px;">
-                                    Click to upload an image
-                                </p>
-                                <p style="font-size:12px; color:#9ca3af; margin:0;">
-                                    JPG, PNG, WEBP — Max 5MB
-                                </p>
-                            </div>
-                            <img id="image-preview" src="" alt="Preview">
                         </div>
-
-                        {% if form.imageFile.vars.errors|length %}
-                            <div class="invalid-feedback d-block mt-2">
-                                {% for error in form.imageFile.vars.errors %}{{ error.message }}{% endfor %}
+                        {% if form.location.vars.errors|length %}
+                            <div class="text-danger mt-1" style="font-size:12px;">
+                                {% for e in form.location.vars.errors %}{{ e.message }}{% endfor %}
                             </div>
                         {% endif %}
-
                     </div>
-
-                    <div class="d-flex gap-3 align-items-center">
-                        <button type="submit" class="btn btn-primary btn-submit text-white">
-                            <i class="bi bi-check-lg me-2" style="font-size:14px;"></i>
-                            Edit Event
-                        </button>
-                        <a href="{{ path('app_event_show', {'id': event.getId()}) }}" class="btn-cancel">
-                            Cancel
-                        </a>
-                    </div>
-
-                    {{ form_end(form) }}
-
                 </div>
 
-                <div class="col-lg-4">
-                    <div style="position: sticky; top: 1.5rem; z-index: 1;">
-
-                        <div class="tip-box mb-3">
-                            <p style="font-size:13px; font-weight:700; color:#0369a1; margin:0 0 8px;">
-                                <i class="bi bi-lightbulb me-1"></i>Tips for a great event
-                            </p>
-                            <ul style="font-size:12px; color:#0369a1; margin:0; padding-left:16px; line-height:1.8;">
-                                <li>Use a clear and engaging title</li>
-                                <li>Add a high-quality cover image</li>
-                                <li>Be specific about the location</li>
-                                <li>Set a realistic capacity</li>
-                                <li>Describe what participants will experience</li>
-                            </ul>
+                <div class="bg-white border rounded-3 p-4 mb-4">
+                    <div class="d-flex align-items-center gap-2 pb-2 mb-3"
+                         style="border-bottom:2px solid #f3f4f6; font-size:14px; font-weight:700; color:#1a1a2e;">
+                        <div class="form-section-icon">
+                            <i class="bi bi-people text-white" style="font-size:13px;"></i>
                         </div>
+                        Capacity & Pricing
+                    </div>
 
-                        <div class="form-card">
-                            <p style="font-size:13px; font-weight:700; color:#1a1a2e; margin:0 0 1rem;">
-                                <i class="bi bi-eye me-1"></i>Event Preview
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            {{ form_label(form.capacity, null, {'label_attr': {'class': 'form-label fw-semibold text-secondary', 'style': 'font-size:13px;'}}) }}
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="bi bi-people" style="font-size:14px;"></i>
+                                </span>
+                                {{ form_widget(form.capacity, {
+                                    'attr': {
+                                        'class': 'form-control' ~ (form.capacity.vars.errors|length ? ' is-invalid' : ''),
+                                        'placeholder': '100'
+                                    }
+                                }) }}
+                            </div>
+                            {% if form.capacity.vars.errors|length %}
+                                <div class="text-danger mt-1" style="font-size:12px;">
+                                    {% for e in form.capacity.vars.errors %}{{ e.message }}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_label(form.price, null, {'label_attr': {'class': 'form-label fw-semibold text-secondary', 'style': 'font-size:13px;'}}) }}
+                            <div class="input-group">
+                                <span class="input-group-text fw-bold" style="font-size:12px;">TND</span>
+                                {{ form_widget(form.price, {
+                                    'attr': {
+                                        'class': 'form-control' ~ (form.price.vars.errors|length ? ' is-invalid' : ''),
+                                        'placeholder': '0.00',
+                                        'oninput': 'syncPrice(this.value)'
+                                    }
+                                }) }}
+                            </div>
+                            <p class="text-muted mt-1 mb-0" style="font-size:11px;">
+                                Set to 0 for a free event
                             </p>
-                            <div style="background:#f8f7f4; border-radius:10px; overflow:hidden;">
-                                <div style="height:100px; background:#1a1a2e; display:flex;
-                                            align-items:center; justify-content:center;"
-                                     id="preview-thumb">
-                                    <i class="bi bi-image" style="font-size:28px; color:rgba(255,255,255,0.2);"></i>
+                            {% if form.price.vars.errors|length %}
+                                <div class="text-danger mt-1" style="font-size:12px;">
+                                    {% for e in form.price.vars.errors %}{{ e.message }}{% endfor %}
                                 </div>
-                                <div style="padding:12px;">
-                                    <p id="preview-title"
-                                       style="font-size:13px; font-weight:700; color:#1a1a2e;
-                                              margin:0 0 6px;">Your event title</p>
-                                    <p id="preview-date"
-                                       style="font-size:11px; color:#9ca3af; margin:0 0 2px;">
-                                        <i class="bi bi-calendar3 me-1"></i>Date not set
-                                    </p>
-                                    <p id="preview-location"
-                                       style="font-size:11px; color:#9ca3af; margin:0;">
-                                        <i class="bi bi-geo-alt me-1"></i>Location not set
-                                    </p>
-                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white border rounded-3 p-4 mb-4">
+                    <div class="d-flex align-items-center gap-2 pb-2 mb-3"
+                         style="border-bottom:2px solid #f3f4f6; font-size:14px; font-weight:700; color:#1a1a2e;">
+                        <div class="form-section-icon">
+                            <i class="bi bi-image text-white" style="font-size:13px;"></i>
+                        </div>
+                        Event Image
+                    </div>
+
+                    {% if event.getImage() %}
+                        <div id="current-image-wrapper" class="mb-3">
+                            <p class="text-muted text-uppercase fw-bold mb-2" style="font-size:11px; letter-spacing:0.5px;">
+                                Current image
+                            </p>
+                            <div class="position-relative">
+                                <img src="{{ asset('uploads/events/' ~ event.getImage()) }}"
+                                     id="current-image"
+                                     alt="Current image"
+                                     class="w-100 rounded-3 border"
+                                     style="height:180px; object-fit:cover;">
+                                <span class="position-absolute top-0 start-0 m-2 badge"
+                                      style="background:rgba(0,0,0,0.6); font-size:11px;">
+                                    Current
+                                </span>
                             </div>
                         </div>
+                    {% endif %}
 
+                    <div class="image-upload-zone p-4 text-center">
+                        {{ form_widget(form.imageFile, {
+                            'attr': {
+                                'accept': 'image/jpeg,image/png,image/webp',
+                                'onchange': 'syncImage(this)'
+                            }
+                        }) }}
+                        <div id="upload-placeholder">
+                            <i class="bi bi-cloud-arrow-up d-block mb-2"
+                               style="font-size:36px; color:#d1d5db;"></i>
+                            <p class="fw-semibold mb-1" style="font-size:14px; color:#374151;">
+                                {{ event.getImage() ? 'Click to replace the image' : 'Click to upload an image' }}
+                            </p>
+                            <p class="text-muted mb-0" style="font-size:12px;">
+                                JPG, PNG, WEBP — Max 2MB
+                            </p>
+                        </div>
+                        <img id="image-preview" src="" alt="New preview">
                     </div>
+
+                    {% if form.imageFile.vars.errors|length %}
+                        <div class="text-danger mt-2" style="font-size:12px;">
+                            {% for e in form.imageFile.vars.errors %}{{ e.message }}{% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
 
+                <div class="d-flex gap-3 align-items-center">
+                    <button type="submit" class="btn btn-primary btn-submit text-white px-4 py-2 rounded-3">
+                        <i class="bi bi-check-lg me-2"></i>Save Changes
+                    </button>
+                    <a href="{{ path('app_event_show', {'id': event.getId()}) }}"
+                       class="btn btn-cancel px-4 py-2 rounded-3">
+                        Cancel
+                    </a>
+                </div>
+
+                {{ form_end(form) }}
             </div>
+
+            <div class="col-lg-4">
+                <div class="sticky-top" style="top:1.5rem; z-index:1;">
+
+                    <div class="p-3 mb-3 rounded-3"
+                         style="background:#f0f9ff; border:1px solid #bae6fd;">
+                        <p class="fw-bold mb-2" style="font-size:13px; color:#0369a1;">
+                            <i class="bi bi-lightbulb me-1"></i>Tips for a great event
+                        </p>
+                        <ul class="mb-0 ps-3" style="font-size:12px; color:#0369a1; line-height:1.8;">
+                            <li>Use a clear and engaging title</li>
+                            <li>Add a high-quality cover image</li>
+                            <li>Be specific about the location</li>
+                            <li>Set a realistic capacity</li>
+                            <li>Describe what participants will experience</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-white border rounded-3 p-3">
+                        <p class="fw-bold mb-3" style="font-size:13px; color:#1a1a2e;">
+                            <i class="bi bi-eye me-1"></i>Live Preview
+                        </p>
+
+                        <div id="preview-card" class="position-relative rounded-3 overflow-hidden">
+
+                            <div class="my-event-card border rounded-3 overflow-hidden">
+
+                                <div class="event-thumb" id="preview-thumb">
+                                    {% if event.getImage() %}
+                                        <img id="preview-img"
+                                             src="{{ asset('uploads/events/' ~ event.getImage()) }}"
+                                             alt="preview">
+                                    {% else %}
+                                        <i class="bi bi-calendar-event"
+                                           style="font-size:40px; color:rgba(255,255,255,0.2);"></i>
+                                    {% endif %}
+                                    <span class="event-badge" id="preview-badge">
+                                        {{ event.getCategory().getLabel() }}
+                                    </span>
+                                    <span class="event-price" id="preview-price">
+                                        {% if event.getPrice() == 0 %}Free
+                                        {% else %}{{ event.getPrice()|number_format(2, '.', ' ') }} TND{% endif %}
+                                    </span>
+                                </div>
+
+                                <div class="p-3 d-flex flex-column">
+                                    <p id="preview-title"
+                                       class="fw-bold mb-2"
+                                       style="font-size:14px; color:#1a1a2e; line-height:1.3;">
+                                        {{ event.getTitle() }}
+                                    </p>
+                                    <div class="meta-row">
+                                        <i class="bi bi-calendar3 text-secondary" style="font-size:11px;"></i>
+                                        <span class="meta-text" id="preview-date">
+                                            {{ event.getStartDateTime()|date('d M Y · H:i') }}
+                                        </span>
+                                    </div>
+                                    <div class="meta-row">
+                                        <i class="bi bi-geo-alt text-secondary" style="font-size:11px;"></i>
+                                        <span class="meta-text" id="preview-location">
+                                            {{ event.getLocation() }}
+                                        </span>
+                                    </div>
+                                    <div class="meta-row mb-2">
+                                        <i class="bi bi-tag text-secondary" style="font-size:11px;"></i>
+                                        <span class="meta-text" id="preview-category">
+                                            {{ event.getCategory().getLabel() }}
+                                        </span>
+                                    </div>
+                                    <div class="mt-auto">
+                                        <a href="#" class="btn-reserve">
+                                            <i class="bi bi-ticket me-1" style="font-size:12px;"></i>Reserve
+                                        </a>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="position-absolute top-0 start-0 w-100 h-100 rounded-3"
+                                 style="background:rgba(255,255,255,0.4);
+                                        backdrop-filter:blur(1px);
+                                        cursor:not-allowed; z-index:10;">
+                            </div>
+
+                            <div class="position-absolute top-50 start-50 translate-middle rounded-pill px-3 py-2"
+                                 style="background:rgba(26,26,46,0.85); color:white;
+                                        font-size:12px; font-weight:700;
+                                        z-index:11; pointer-events:none; white-space:nowrap;">
+                                <i class="bi bi-broadcast me-1" style="font-size:11px;"></i>
+                                Live preview
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
         </div>
-    </section>
+    </div>
 </div>
 
 <script>
-function previewImage(input) {
-    const preview = document.getElementById('image-preview');
-    const placeholder = document.getElementById('upload-placeholder');
-    const thumbPreview = document.getElementById('preview-thumb');
-    
+function syncTitle(val) {
+    document.getElementById('preview-title').textContent = val || 'Event title';
+}
 
-    if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            preview.src = e.target.result;
-            preview.style.display = 'block';
-            placeholder.style.display = 'none';
-            thumbPreview.style.backgroundImage = 'url(' + e.target.result + ')';
-            thumbPreview.style.backgroundSize = 'cover';
-            thumbPreview.style.backgroundPosition = 'center';
-            thumbPreview.innerHTML = '';
-        };
-        reader.readAsDataURL(input.files[0]);
+function syncLocation(val) {
+    document.getElementById('preview-location').textContent = val || 'Location';
+}
+
+function syncDate(val) {
+    const el = document.getElementById('preview-date');
+    if (!val) return;
+    const d = new Date(val);
+    el.textContent = d.toLocaleDateString('en-GB', {
+        day: 'numeric', month: 'short', year: 'numeric'
+    }) + ' · ' + d.toLocaleTimeString('en-GB', {
+        hour: '2-digit', minute: '2-digit'
+    });
+}
+
+function syncCategory(select) {
+    const label = select.options[select.selectedIndex]?.text || 'Category';
+    document.getElementById('preview-category').textContent = label;
+    document.getElementById('preview-badge').textContent    = label;
+}
+
+function syncPrice(val) {
+    const el  = document.getElementById('preview-price');
+    const num = parseFloat(val);
+    if (isNaN(num) || num === 0) {
+        el.textContent         = 'Free';
+        el.style.background    = '#EAF3DE';
+        el.style.color         = '#3B6D11';
+    } else {
+        el.textContent         = num.toFixed(2) + ' TND';
+        el.style.background    = 'white';
+        el.style.color         = '#1a1a2e';
     }
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    previewImage(document.querySelector('[name$="[imageFile]"]'));
-    const titleInput = document.querySelector('[name$="[title]"]');
-    const locationInput = document.querySelector('[name$="[location]"]');
-    const dateInput = document.querySelector('[name$="[start_date_time]"]');
+function syncImage(input) {
+    if (!input.files || !input.files[0]) return;
 
-    if (titleInput) {
-        titleInput.addEventListener('input', function () {
-            const el = document.getElementById('preview-title');
-            el.textContent = this.value || 'Your event title';
-        });
-    }
-    if (locationInput) {
-        locationInput.addEventListener('input', function () {
-            const el = document.getElementById('preview-location');
-            el.innerHTML = '<i class="bi bi-geo-alt me-1"></i>' + (this.value || 'Location not set');
-        });
-    }
-    if (dateInput) {
-        dateInput.addEventListener('change', function () {
-            const el = document.getElementById('preview-date');
-            if (this.value) {
-                const d = new Date(this.value);
-                el.innerHTML = '<i class="bi bi-calendar3 me-1"></i>'
-                    + d.toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'})
-                    + ' · ' + d.toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'});
-            } else {
-                el.innerHTML = '<i class="bi bi-calendar3 me-1"></i>Date not set';
-            }
-        });
-    }
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const src = e.target.result;
 
+        // Update preview thumb
+        let img = document.getElementById('preview-img');
+        if (!img) {
+            img = document.createElement('img');
+            img.id = 'preview-img';
+            img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+            const thumb = document.getElementById('preview-thumb');
+            const icon = thumb.querySelector('i');
+            if (icon) icon.remove();
+            thumb.insertBefore(img, thumb.firstChild);
+        }
+        img.src = src;
 
-});
+        // Update current image wrapper
+        const currentImg = document.getElementById('current-image');
+        if (currentImg) {
+            currentImg.src = src;
+            currentImg.style.opacity = '0.5';
+        }
+
+        // Show preview in upload zone
+        const preview = document.getElementById('image-preview');
+        const placeholder = document.getElementById('upload-placeholder');
+        if (preview) { preview.src = src; preview.style.display = 'block'; }
+        if (placeholder) placeholder.style.display = 'none';
+    };
+    reader.readAsDataURL(input.files[0]);
+}
 </script>
 {% endblock %}

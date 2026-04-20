@@ -129,7 +129,7 @@
                             </li>
                         </ul>
 
-                        <button type="submit" form="event_sub_form" class="btn btn-dark w-100 py-3 fw-bold shadow-sm" style="border-radius: 12px; background-color: #1a1a2e;">
+                        <button type="submit" form="event_sub_form" class="btn btn-dark w-100 py-3 fw-bold shadow-sm {% if event.subscribedCount >= event.capacity or event.status.label() == 'Completed' %}disabled{% endif %}" style="border-radius: 12px; background-color: #1a1a2e;">
                             COMPLETE REGISTRATION <i class="bi bi-arrow-right ms-2"></i>
                         </button>
                         

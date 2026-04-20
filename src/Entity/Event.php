@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\EventStatus;
 use App\Repository\EventRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -64,11 +65,21 @@ class Event
     #[ORM\OneToMany(targetEntity: EventSubscribe::class, mappedBy: 'event', orphanRemoval: true)]
     private Collection $eventSubscribes;
 
+    #[ORM\Column(enumType: EventStatus::class)]
+    private EventStatus $status = EventStatus::UPCOMING;
+
+    /**
+     * @var Collection<int, Comment>
+     */
+    #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'Event')]
+    private Collection $comments;
+
     
 
     public function __construct()
     {
         $this->eventSubscribes = new ArrayCollection();
+        $this->comments = new ArrayCollection();
     }
 
     
@@ -302,5 +313,47 @@ class Event
                 ->atPath('end_date_time')
                 ->addViolation();
         }
+    }
+
+    public function getStatus(): ?EventStatus
+    {
+        return $this->status;
+    }
+
+    public function setStatus(EventStatus $status): static
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Comment>
+     */
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    public function addComment(Comment $comment): static
+    {
+        if (!$this->comments->contains($comment)) {
+            $this->comments->add($comment);
+            $comment->setEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeComment(Comment $comment): static
+    {
+        if ($this->comments->removeElement($comment)) {
+            // set the owning side to null (unless already changed)
+            if ($comment->getEvent() === $this) {
+                $comment->setEvent(null);
+            }
+        }
+
+        return $this;
     }
 }

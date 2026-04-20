@@ -1,282 +1,432 @@
 {% extends 'Front_office/base.html.twig' %}
 
 {% block title %}{{ event.title }} — Event Management{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .category-badge {
+        background: rgba(234,243,222,0.8);
+        color: #003;
+        backdrop-filter: blur(8px);
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 13px;
+    }
+    .card-custom {
+        background: #fff;
+        border-radius: 18px;
+        border: 1px solid #eee;
+        padding: 25px;
+        transition: all 0.3s ease;
+    }
+    .info-box {
+        background: #f9faff;
+        border-radius: 12px;
+        padding: 12px;
+        margin-bottom: 15px;
+        transition: 0.2s;
+    }
+    .info-box:hover { background: #eef2ff; transform: scale(1.02); }
+    .booking-card {
+        background: #fff;
+        border-radius: 20px;
+        padding: 25px;
+        border: 1px solid #eee;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+    }
+    .btn-dark-custom {
+        background: #1a1a2e;
+        border-radius: 10px;
+        padding: 12px;
+        font-weight: 600;
+        border: none;
+        color: white;
+        transition: opacity 0.2s;
+        width: 100%;
+        display: block;
+        text-align: center;
+        text-decoration: none;
+        font-size: 14px;
+    }
+    .btn-dark-custom:hover { opacity: 0.85; color: white; }
+    .btn-dark-custom.disabled {
+        opacity: 0.5;
+        pointer-events: none;
+    }
+    .image-modal {
+        position: fixed; top: 0; left: 0;
+        width: 100%; height: 100%;
+        backdrop-filter: blur(12px);
+        background: rgba(0,0,0,0.6);
+        display: flex; justify-content: center; align-items: center;
+        opacity: 0; visibility: hidden;
+        transition: 0.3s; z-index: 9999;
+    }
+    .image-modal.active { opacity: 1; visibility: visible; }
+    .image-modal img {
+        width: 80%; max-height: 80%;
+        object-fit: contain; border-radius: 16px;
+        transform: scale(0.8); transition: 0.3s;
+    }
+    .image-modal.active img { transform: scale(1); }
+    .close-btn {
+        position: absolute; top: 30px; right: 40px;
+        font-size: 40px; color: white; cursor: pointer;
+    }
+    .event-image-click { cursor: pointer; transition: 0.3s; }
+    .event-image-click:hover { transform: scale(1.02); }
+
+    /* ===== Comments ===== */
+    .comment-item {
+        background: #f8f7f4;
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+        border: 1px solid #e5e7eb;
+        transition: border-color 0.2s;
+    }
+    .comment-item:hover { border-color: #d1d5db; }
+
+    .comment-avatar {
+        width: 38px; height: 38px;
+        border-radius: 50%;
+        background: #1a1a2e;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 14px; font-weight: 700; color: white;
+        flex-shrink: 0;
+    }
+
+    .comment-form-area {
+        background: #fafafa;
+        border-color: #e5e7eb !important;
+        font-size: 14px;
+        resize: vertical;
+    }
+    .comment-form-area:focus {
+        border-color: #1a1a2e !important;
+        box-shadow: none !important;
+        background: white !important;
+    }
+
+    .btn-comment-submit {
+        background: #1a1a2e;
+        border: none;
+        border-radius: 8px;
+        color: white;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 9px 20px;
+        transition: opacity 0.2s;
+        cursor: pointer;
+    }
+    .btn-comment-submit:hover { opacity: 0.85; }
+
+    .comments-count-badge {
+        background: #f3f4f6;
+        color: #6b7280;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 10px;
+    }
+</style>
+{% endblock %}
+
 {% block body %}
 
-<style>
-.category-badge {
-    background: rgba(234,243,222,0.8);
-    color: #003;
-    backdrop-filter: blur(8px);
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 13px;
-}
-
-
-.card-custom {
-    background: #fff;
-    border-radius: 18px;
-    border: 1px solid #eee;
-    padding: 25px;
-    transition: all 0.3s ease;
-    position: relative;
-}
-
-.card-custom:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.08);
-}
-
-.card-custom p {
-    line-height: 1.7;
-    color: #555;
-}
-
-
-.info-box {
-    background: #f9faff;
-    border-radius: 12px;
-    padding: 12px;
-    margin-bottom: 15px;
-    transition: 0.2s;
-}
-
-.info-box:hover {
-    background: #eef2ff;
-    transform: scale(1.02);
-}
-
-.booking-card {
-    background: #fff;
-    border-radius: 20px;
-    padding: 25px;
-    border: 1px solid #eee;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.06);
-    transition: 0.3s;
-}
-
-.booking-card:hover {
-    transform: translateY(-5px);
-}
-
-.btn-dark {
-    background: linear-gradient(135deg, #1e1e3f, #2b2b5f);
-    border-radius: 12px;
-    padding: 12px;
-    font-weight: 500;
-    border: none;
-    transition: 0.3s;
-}
-
-.btn-dark:hover {
-    transform: scale(1.03);
-    box-shadow: 0 8px 20px rgba(43,43,95,0.4);
-}
-
-
-.text-muted {
-    color: #777 !important;
-}
-
-/* MODAL BACKGROUND */
-.image-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-
-    backdrop-filter: blur(12px);
-    background: rgba(0,0,0,0.6);
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    opacity: 0;
-    visibility: hidden;
-    transition: 0.3s;
-    z-index: 9999;
-}
-
-/* ACTIVE */
-.image-modal.active {
-    opacity: 1;
-    visibility: visible;
-}
-
-/* IMAGE */
-.image-modal img {
-    width: 80%;
-    max-height: 80%;
-    object-fit: contain;
-
-    border-radius: 16px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-
-    transform: scale(0.8);
-    transition: 0.3s;
-}
-
-.image-modal.active img {
-    transform: scale(1);
-}
-
-/* CLOSE BUTTON */
-.close-btn {
-    position: absolute;
-    top: 30px;
-    right: 40px;
-    font-size: 40px;
-    color: white;
-    cursor: pointer;
-}
-
-/* CLICKABLE IMAGE */
-.event-image-click {
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.event-image-click:hover {
-    transform: scale(1.03);
-}
-
-</style>
-
-
-
-
-<!-- CONTENT -->
-<section class="py-5 bg-light">
+<section class="py-5" style="background:#f8f7f4;">
     <div class="container">
-
         <div class="row g-5">
 
-            <!-- LEFT -->
             <div class="col-lg-8">
 
-                <!-- DESCRIPTION -->
-                <div class="card-custom p-4 mb-4">
-                 <div class="text-center mb-4">
-                    <h1 class="mb-1 fw-bold">{{ event.title }}</h1>
+                <div class="card-custom mb-4">
+                    <div class="text-center mb-4">
+                        <h1 class="mb-2 fw-bold" style="color:#1a1a2e;">{{ event.title }}</h1>
+                        <span class="badge category-badge">
+                            <i class="bi bi-tag me-1" style="font-size:10px;"></i>
+                            {{ event.category.label }}
+                        </span>
+                    </div>
 
-                    <span class="badge category-badge">
-                    <i class="bi bi-tag me-1" style="font-size:10px;"></i>
-                        {{ event.category.label }}
-                    </span>
+                    <h5 class="fw-bold mb-2" style="color:#1a1a2e;">Description</h5>
+                    <p class="text-muted" style="line-height:1.8;">{{ event.description }}</p>
+
+                    {% if event.image %}
+                        <img src="{{ asset('uploads/events/' ~ event.image) }}"
+                             class="event-image-click img-fluid rounded-3 mt-2 w-100"
+                             style="max-height:400px; object-fit:cover;"
+                             id="eventImage"
+                             alt="{{ event.title }}">
+                    {% endif %}
                 </div>
-                    <h5>Description</h5>
-                    <p class="text-muted">
-                        {{ event.description }}
-                    </p>
-                    <img src="{{ asset('uploads/events/' ~ event.image) }}" class="event-image-click img-fluid" id="eventImage">
-                </div>
 
-                <!-- DETAILS -->
-                <div class="card-custom p-4">
-                    <h5>Event Details</h5>
+                <div class="card-custom mb-4">
+                    <h5 class="fw-bold mb-3" style="color:#1a1a2e;">Event Details</h5>
+                    <div class="row g-2">
 
-                    <div class="row mt-3 ">
-
-                        <div class="col-md-6 info-box">
-                            <i class="bi bi-calendar3" style="font-size:20px; color:#9ca3af;"></i>
-                            <strong>Start:</strong><br>
-                            {{ event.startDateTime|date('d M Y - H:i') }}
+                        <div class="col-md-6">
+                            <div class="info-box">
+                                <i class="bi bi-calendar3 me-2" style="color:#9ca3af;"></i>
+                                <strong>Start</strong><br>
+                                <span class="text-muted">
+                                    {{ event.startDateTime|date('d M Y · H:i') }}
+                                </span>
+                            </div>
                         </div>
-                        
 
                         {% if event.endDateTime %}
-                        <div class="col-md-6 info-box">
-                            <i class="bi bi-clock" style="font-size:20px; color:#9ca3af;"></i>
-                            <strong>End:</strong><br>
-                            {{ event.endDateTime|date('d M Y - H:i') }}
+                        <div class="col-md-6">
+                            <div class="info-box">
+                                <i class="bi bi-clock me-2" style="color:#9ca3af;"></i>
+                                <strong>End</strong><br>
+                                <span class="text-muted">
+                                    {{ event.endDateTime|date('d M Y · H:i') }}
+                                </span>
+                            </div>
                         </div>
                         {% endif %}
 
-                        <div class="col-md-6 info-box">
-                            <i class="bi bi-geo-alt" style="font-size:20px; color:#9ca3af;"></i>
-                             <strong>Location:</strong><br>
-                            {{ event.location }}
+                        <div class="col-md-6">
+                            <div class="info-box">
+                                <i class="bi bi-geo-alt me-2" style="color:#9ca3af;"></i>
+                                <strong>Location</strong><br>
+                                <span class="text-muted">{{ event.location }}</span>
+                            </div>
                         </div>
 
-                        <div class="col-md-6 info-box">
-                            <i class="bi bi-people" style="font-size:20px; color:#9ca3af;"></i>
-                            <strong>Capacity:</strong><br>
-                            {{ event.capacity }}
+                        <div class="col-md-6">
+                            <div class="info-box">
+                                <i class="bi bi-people me-2" style="color:#9ca3af;"></i>
+                                <strong>Capacity</strong><br>
+                                <span class="text-muted">
+                                    {{ event.subscribedCount }} / {{ event.capacity }} seats
+                                </span>
+                            </div>
                         </div>
 
-                        <div class="col-md-6 info-box">
-                            <i class="bi bi-person" style="font-size:20px; color:#9ca3af;"></i>
-                            <strong>Organizer:</strong><br>
-                            {{ event.organizer.email }}
+                        <div class="col-md-6">
+                            <div class="info-box">
+                                <i class="bi bi-person me-2" style="color:#9ca3af;"></i>
+                                <strong>Organizer</strong><br>
+                                <span class="text-muted">{{ event.organizer.email }}</span>
+                            </div>
                         </div>
 
                     </div>
                 </div>
 
-            </div>
+                <div class="card-custom">
 
-            <!-- RIGHT SIDEBAR -->
-            <div class="col-lg-4 ">
+                    <div class="d-flex align-items-center gap-2 mb-4">
+                        <h5 class="fw-bold mb-0" style="color:#1a1a2e;">
+                            <i class="bi bi-chat-dots me-2"></i>Comments
+                        </h5>
+                        <span class="comments-count-badge">{{ comments|length }}</span>
+                    </div>
 
-                <div class="booking-card p-4 text-center sticky-top" style="top: 20px;">
+                    <div class="mb-4 p-3 rounded-3 border" style="background:#f8f7f4;">
+                        <p class="fw-semibold mb-2" style="font-size:14px; color:#1a1a2e;">
+                            <i class="bi bi-pencil me-1"></i>Leave a comment
+                        </p>
 
-                    <h3 class="mb-3">
-                        {{ event.price > 0 ? event.price ~ ' TND' : 'Free' }}
-                    </h3>
+                        {{ form_start(commentForm, {'attr': {'novalidate': 'novalidate'}}) }}
 
-                    <p class="text-muted">Reserve your place now</p>
+                            {{ form_widget(commentForm.body, {
+                                'attr': {
+                                    'class': 'form-control comment-form-area mb-2',
+                                    'placeholder': 'Share your thoughts about this event...',
+                                    'rows': 4
+                                }
+                            }) }}
 
-                    <a href="{{ path('app_public_event_subscribe', { id: event.id }) }}" class="btn btn-dark w-100">
-                        <i class="bi bi-ticket me-1" style="font-size:15px;"></i>
-                        Subscribe
-                    </a>
+                            {% if commentForm.body.vars.errors|length %}
+                                <div class="text-danger mb-2" style="font-size:12px;">
+                                    {% for e in commentForm.body.vars.errors %}
+                                        {{ e.message }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
 
-                    <hr>
+                            <div class="d-flex justify-content-end">
+                                <button type="submit" class="btn-comment-submit">
+                                    <i class="bi bi-send me-1" style="font-size:12px;"></i>
+                                    Post Comment
+                                </button>
+                            </div>
 
-                    <small class="text-muted">
-                        Limited seats available
-                    </small>
+                        {{ form_end(commentForm) }}
+                    </div>
+
+                    {% if comments|length > 0 %}
+                        <div class="d-flex flex-column gap-3">
+                            {% for comment in comments %}
+                                <div class="comment-item d-flex gap-3">
+
+                                   
+
+                                    <div style="flex:1; min-width:0;">
+                                        <div class="d-flex justify-content-between align-items-center mb-1 flex-wrap gap-1">
+                                            <span class="fw-semibold" style="font-size:13px; color:#1a1a2e;">
+                                               {% if comment.user %}
+                                                    <div class="d-flex align-items-center gap-2">
+                                                    <div style="width:32px; height:32px; border-radius:50%; background:#1a1a2e;
+                                                        display:flex; align-items:center; justify-content:center;
+                                                        font-size:12px; font-weight:700; color:white; flex-shrink:0;">
+                                                        {% if app.user.avatar is defined and app.user.avatar is not empty %}
+                                                            <img src="{{ asset('uploads/avatars/' ~ app.user.avatar) }}"
+                                                                alt="Profile Picture {{ app.user.firstName is defined ? app.user.firstName : app.user.userIdentifier }}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">
+                                                        {% else %}
+                                                            <span style="font-size:12px; font-weight:700; color:#1a1a2e;">
+                                                            {{ app.user.firstName is defined
+                                                                ? app.user.firstName|first|upper
+                                                                : app.user.userIdentifier|first|upper }}
+                                                            </span>
+                                                        {% endif %}
+                                                        </div>
+                                                        <div>
+                                                            <span class="fw-semibold" style="font-size:13px; color:#1a1a2e;">
+                                                                {{ comment.user.getFirstName() }} {{ comment.user.getLastName() }}
+                                                            </span>
+                                                            {% if app.user and app.user.id == comment.user.id %}
+                                                                <span class="badge ms-1"
+                                                                    style="background:#EAF3DE; color:#3B6D11; font-size:10px;">
+                                                                    You
+                                                                </span>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                {% else %}
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <div style="width:32px; height:32px; border-radius:50%; background:#f3f4f6;
+                                                                    border:1px solid #e5e7eb;
+                                                                    display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                                            <i class="bi bi-person" style="font-size:14px; color:#9ca3af;"></i>
+                                                        </div>
+                                                        <span class="fw-semibold" style="font-size:13px; color:#6b7280;">
+                                                            Anonymous
+                                                        </span>
+                                                    </div>
+                                                {% endif %}
+                                            </span>
+                                            <span class="text-muted" style="font-size:11px;">
+                                                <i class="bi bi-clock me-1"></i>
+                                                {{ comment.createdAt|date('d M Y · H:i') }}
+                                            </span>
+                                        </div>
+                                        <p style="font-size:14px; color:#374151; line-height:1.6; margin:0;">
+                                            {{ comment.body }}
+                                        </p>
+                                    </div>
+
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                    {% else %}
+                        <div class="text-center py-4">
+                            <div style="width:60px; height:60px; background:#f3f4f6;
+                                        border-radius:50%; display:flex; align-items:center;
+                                        justify-content:center; margin:0 auto 12px;">
+                                <i class="bi bi-chat" style="font-size:24px; color:#9ca3af;"></i>
+                            </div>
+                            <p class="text-muted mb-0" style="font-size:14px;">
+                                No comments yet. Be the first to comment!
+                            </p>
+                        </div>
+                    {% endif %}
 
                 </div>
 
             </div>
 
-        </div>
+            <div class="col-lg-4">
+                <div class="booking-card text-center sticky-top" style="top:20px;">
 
+                    <h3 class="fw-bold mb-1" style="color:#1a1a2e;">
+                        {% if event.price > 0 %}
+                            {{ event.price|number_format(2, '.', ' ') }} TND
+                        {% else %}
+                            <span style="color:#3B6D11;">Free</span>
+                        {% endif %}
+                    </h3>
+
+                    <p class="text-muted mb-3" style="font-size:13px;">Reserve your place now</p>
+
+                    {% set pct = event.capacity > 0
+                        ? ((event.subscribedCount / event.capacity) * 100)|round
+                        : 0 %}
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span style="font-size:11px; color:#9ca3af;">Availability</span>
+                            <span style="font-size:11px; font-weight:600; color:#1a1a2e;">
+                                {{ event.capacity - event.subscribedCount }} spots left
+                            </span>
+                        </div>
+                        <div class="progress" style="height:6px; border-radius:6px;">
+                            <div class="progress-bar"
+                                 style="width:{{ pct }}%;
+                                        background:{{ pct >= 90 ? '#dc2626' : (pct >= 60 ? '#f97316' : '#1a1a2e') }};
+                                        border-radius:6px;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="{{ path('app_public_event_subscribe', {id: event.id}) }}"
+                       class="btn-dark-custom mb-3
+                              {{ event.subscribedCount >= event.capacity ? 'disabled' : '' }}">
+                        <i class="bi bi-ticket me-1" style="font-size:14px;"></i>
+                        {{ event.subscribedCount >= event.capacity ? 'Event Full' : 'Subscribe Now' }}
+                    </a>
+
+                    <hr class="my-3">
+
+                    <div class="d-flex flex-column gap-2 text-start">
+                        <div class="d-flex align-items-center gap-2" style="font-size:13px; color:#6b7280;">
+                            <i class="bi bi-calendar3" style="font-size:14px;"></i>
+                            {{ event.startDateTime|date('d M Y · H:i') }}
+                        </div>
+                        <div class="d-flex align-items-center gap-2" style="font-size:13px; color:#6b7280;">
+                            <i class="bi bi-geo-alt" style="font-size:14px;"></i>
+                            {{ event.location }}
+                        </div>
+                        <div class="d-flex align-items-center gap-2" style="font-size:13px; color:#6b7280;">
+                            <i class="bi bi-people" style="font-size:14px;"></i>
+                            {{ event.subscribedCount }} / {{ event.capacity }} registered
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
     </div>
 </section>
 
+{% if event.image %}
 <div id="imageModal" class="image-modal">
     <span class="close-btn">&times;</span>
-    <img id="modalImage">
+    <img id="modalImage" src="" alt="Event image">
 </div>
 
 <script>
-const image = document.getElementById('eventImage');
-const modal = document.getElementById('imageModal');
+const image    = document.getElementById('eventImage');
+const modal    = document.getElementById('imageModal');
 const modalImg = document.getElementById('modalImage');
 const closeBtn = document.querySelector('.close-btn');
 
-// OPEN
 image.addEventListener('click', () => {
     modal.classList.add('active');
     modalImg.src = image.src;
 });
-
-// CLOSE BUTTON
-closeBtn.addEventListener('click', () => {
-    modal.classList.remove('active');
+closeBtn.addEventListener('click', () => modal.classList.remove('active'));
+modal.addEventListener('click', e => {
+    if (e.target !== modalImg) modal.classList.remove('active');
 });
-
-// CLOSE ON CLICK OUTSIDE
-modal.addEventListener('click', (e) => {
-    if (e.target !== modalImg) {
-        modal.classList.remove('active');
-    }
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') modal.classList.remove('active');
 });
 </script>
+{% endif %}
 
 {% endblock %}
