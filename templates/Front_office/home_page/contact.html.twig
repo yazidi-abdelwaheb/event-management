@@ -167,6 +167,7 @@
                         </p>
 
                         <form method="post">
+                            <input type="hidden" name="_token" value="{{ csrf_token('contact_form') }}">
                             <div class="row g-3 mb-3">
                                 <div class="col-sm-6">
                                     <label class="form-label">First Name</label>

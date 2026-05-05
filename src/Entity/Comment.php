@@ -22,7 +22,7 @@ class Comment
     private ?\DateTimeImmutable $created_at = null;
 
     #[ORM\ManyToOne(inversedBy: 'comments')]
-    private ?Event $Event = null;
+    private ?Event $event = null;
 
     #[ORM\ManyToOne(inversedBy: 'comments')]
     private ?User $user = null;
@@ -68,12 +68,12 @@ class Comment
 
     public function getEvent(): ?Event
     {
-        return $this->Event;
+        return $this->event;
     }
 
-    public function setEvent(?Event $Event): static
+    public function setEvent(?Event $event): static
     {
-        $this->Event = $Event;
+        $this->event = $event;
 
         return $this;
     }

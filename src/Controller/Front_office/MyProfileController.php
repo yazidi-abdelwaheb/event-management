@@ -4,13 +4,17 @@ namespace App\Controller\Front_office;
 
 use App\Entity\User;
 use App\Repository\EventSubscribeRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[IsGranted('IS_AUTHENTICATED_FULLY')]
 final class MyProfileController extends AbstractController
 {
     #[Route('/my-profile', name: 'app_my_profile')]
@@ -25,6 +29,7 @@ final class MyProfileController extends AbstractController
     public function edit(
         Request $request,
         EntityManagerInterface $em,
+        UserRepository $userRepository,
         UserPasswordHasherInterface $hasher
     ): Response {
         /** @var User $user */
@@ -51,7 +56,13 @@ final class MyProfileController extends AbstractController
                     $error = 'All fields are required.';
                 } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                     $error = 'Invalid email address.';
-                } else {
+                } elseif ($existingUser = $userRepository->findOneBy(['email' => $email])) {
+                    if ($existingUser->getId() !== $user->getId()) {
+                        $error = 'This email address is already in use.';
+                    }
+                }
+
+                if ($error === null) {
                     $user->setFirstName($firstName);
                     $user->setLastName($lastName);
                     $user->setEmail($email);
@@ -63,16 +74,16 @@ final class MyProfileController extends AbstractController
             // ── Section : Avatar ──
             if ($section === 'avatar') {
                 $avatarFile = $request->files->get('avatar');
-                if ($avatarFile) {
+                if ($avatarFile instanceof UploadedFile) {
                     $allowed = ['image/jpeg', 'image/png', 'image/webp'];
-                    if (!in_array($avatarFile->getMimeType(), $allowed)) {
+                    if (!in_array($avatarFile->getMimeType(), $allowed, true)) {
                         $error = 'Unsupported format (JPG, PNG, WEBP only).';
                     } elseif ($avatarFile->getSize() > 2 * 1024 * 1024) {
                         $error = 'Image too large (max 2MB).';
                     } else {
-                        // Optionnel : supprimer l'ancien avatar s'il existe
                         $filename = uniqid() . '.' . $avatarFile->guessExtension();
-                        $avatarFile->move($this->getParameter('kernel.project_dir') . '/public/uploads/avatars', $filename);
+                        $avatarFile->move($this->getParameter('avatars_directory'), $filename);
+                        $this->removeOldAvatar($user->getAvatar());
                         $user->setAvatar($filename);
                         $em->flush();
                         $success = 'Avatar updated successfully.';
@@ -122,5 +133,17 @@ final class MyProfileController extends AbstractController
         return $this->render('Front_office/my-profile/tickets/index.html.twig', [
             'tickets' => $eventSubscribe,
         ]);
+    }
+
+    private function removeOldAvatar(?string $filename): void
+    {
+        if (!$filename) {
+            return;
+        }
+
+        $avatarPath = $this->getParameter('avatars_directory') . '/' . $filename;
+        if (is_file($avatarPath)) {
+            @unlink($avatarPath);
+        }
     }
 }

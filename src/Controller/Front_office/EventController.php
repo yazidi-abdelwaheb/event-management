@@ -8,12 +8,15 @@ use App\Repository\EventRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/my-profile/events')]
+#[IsGranted('IS_AUTHENTICATED_FULLY')]
 final class EventController extends AbstractController
 {
     #[Route(name: 'app_event_index', methods: ['GET'])]
@@ -39,21 +42,15 @@ final class EventController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $imageFile = $form->get('imageFile')->getData();
-            if ($imageFile) {
-                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $safeFilename     = $slugger->slug($originalFilename);
-                $newFilename      = $safeFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
-
+            if ($imageFile instanceof UploadedFile) {
                 try {
-                    $imageFile->move(
-                        $this->getParameter('events_images_directory'),
-                        $newFilename
-                    );
-                    $event->setImage($newFilename);
+                    $event->setImage($this->uploadImage($imageFile, $slugger));
                 } catch (FileException $e) {
                     $this->addFlash('danger', 'Image upload failed: ' . $e->getMessage());
+                    return $this->redirectToRoute('app_event_new');
                 }
             }
+
             $event->setOrganizer($this->getUser());
             $entityManager->persist($event);
             $entityManager->flush();
@@ -91,28 +88,11 @@ final class EventController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $imageFile = $form->get('imageFile')->getData();
 
-            if ($imageFile) {
-                $oldImage = $event->getImage();
-                if ($oldImage) {
-                    $oldPath = $this->getParameter('events_images_directory') . '/' . $oldImage;
-                    if (file_exists($oldPath)) {
-                        unlink($oldPath);
-                    }
-                }
-
-                $originalFilename = pathinfo(
-                    $imageFile->getClientOriginalName(),
-                    PATHINFO_FILENAME
-                );
-                $safeFilename = $slugger->slug($originalFilename);
-                $newFilename  = $safeFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
+            if ($imageFile instanceof UploadedFile) {
+                $this->removeOldImage($event->getImage());
 
                 try {
-                    $imageFile->move(
-                        $this->getParameter('events_images_directory'),
-                        $newFilename
-                    );
-                    $event->setImage($newFilename);
+                    $event->setImage($this->uploadImage($imageFile, $slugger));
                 } catch (FileException $e) {
                     $this->addFlash('danger', 'Image upload failed: ' . $e->getMessage());
                     return $this->redirectToRoute('app_event_edit', ['id' => $event->getId()]);
@@ -133,11 +113,35 @@ final class EventController extends AbstractController
     #[Route('/{id}', name: 'app_event_delete', methods: ['POST'])]
     public function delete(Request $request, Event $event, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$event->getId(), $request->getPayload()->getString('_token'))) {
+        if ($this->isCsrfTokenValid('delete'.$event->getId(), $request->request->get('_token'))) {
+            $this->removeOldImage($event->getImage());
             $entityManager->remove($event);
             $entityManager->flush();
         }
 
         return $this->redirectToRoute('app_event_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    private function uploadImage(UploadedFile $imageFile, SluggerInterface $slugger): string
+    {
+        $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+        $safeFilename = $slugger->slug($originalFilename);
+        $newFilename = $safeFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
+
+        $imageFile->move($this->getParameter('events_images_directory'), $newFilename);
+
+        return $newFilename;
+    }
+
+    private function removeOldImage(?string $filename): void
+    {
+        if (!$filename) {
+            return;
+        }
+
+        $oldPath = $this->getParameter('events_images_directory') . '/' . $filename;
+        if (is_file($oldPath)) {
+            @unlink($oldPath);
+        }
     }
 }

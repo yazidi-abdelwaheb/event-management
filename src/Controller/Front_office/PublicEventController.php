@@ -8,6 +8,7 @@ use App\Entity\EventSubscribe;
 use App\Form\CommentType;
 use App\Form\EventSubscribeType;
 use App\Repository\EventRepository;
+use App\Repository\EventSubscribeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -68,55 +69,53 @@ final class PublicEventController extends AbstractController
     }
 
     #[Route('/event/{id}/subscribe', name: 'app_public_event_subscribe')]
-    public function subscribe(int $id, EventRepository $eventRepo, Request $request, EntityManagerInterface $em , MailerInterface $mailer): Response
+    public function subscribe(Event $event, Request $request, EventSubscribeRepository $eventSubscribeRepository, EntityManagerInterface $em, MailerInterface $mailer): Response
     {
-        $eventData = $eventRepo->findOneMinContent($id);
-
-        if (!$eventData) {
-            throw $this->createNotFoundException("Event not found.");
-        }
-
         $subscription = new EventSubscribe();
-        $eventObject = $em->getRepository(Event::class)->find($id);
-        $subscription->setEvent($eventObject);
+        $subscription->setEvent($event);
 
         $form = $this->createForm(EventSubscribeType::class, $subscription);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            //$subscription->setStatus('pending');
+            if ($eventSubscribeRepository->findOneBy(['event' => $event, 'email' => $subscription->getEmail()])) {
+                $this->addFlash('error', 'You are already subscribed to this event with this email.');
+                return $this->redirectToRoute('app_public_event_show', ['id' => $event->getId()]);
+            }
+
             $em->persist($subscription);
             $em->flush();
 
             $qrData = json_encode([
                 'subscription_id' => $subscription->getId(),
-                'event_id'        => $id,
-                'subscriber'      => $subscription->getEmail(), // adaptez selon votre entité
+                'event_id'        => $event->getId(),
+                'subscriber'      => $subscription->getEmail(),
             ]);
             $qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' . urlencode($qrData);
 
             $email = (new TemplatedEmail())
-                ->from(new Address('yazidiabdelwaheb@gmail.com', 'EventManage'))
+                ->from(new Address($this->getParameter('mailer_from_email'), $this->getParameter('mailer_from_name')))
                 ->to($subscription->getEmail())
-                ->subject('✅ Confirmation de votre inscription — ' . $eventObject->getTitle())
+                ->subject('✅ Confirmation de votre inscription — ' . $event->getTitle())
                 ->htmlTemplate('Front_office/public_event/event_subscribe/_confirmation_email.html.twig')
                 ->context([
                     'subscription' => $subscription,
-                    'event'        => $eventObject,
+                    'event'        => $event,
                     'qrUrl'        => $qrUrl,
                 ]);
 
-            $mailer->send($email);
+            try {
+                $mailer->send($email);
+            } catch (\Exception $exception) {
+                $this->addFlash('warning', 'Subscription saved, but confirmation email could not be sent at this time.');
+                return $this->redirectToRoute('app_public_event_subscription_success', ['id' => $subscription->getId()]);
+            }
 
-
-            return $this->redirectToRoute('app_public_event_subscription_success', [
-                'eventId' => $id,
-                'id' => $subscription->getId(),
-            ]);
+            return $this->redirectToRoute('app_public_event_subscription_success', ['id' => $subscription->getId()]);
         }
 
-        return $this->render('/Front_office/public_event/event_subscribe/index.html.twig', [
-            'event' => $eventData,
+        return $this->render('Front_office/public_event/event_subscribe/index.html.twig', [
+            'event' => $event,
             'form' => $form,
         ]);
     }

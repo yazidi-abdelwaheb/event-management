@@ -71,7 +71,7 @@ class Event
     /**
      * @var Collection<int, Comment>
      */
-    #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'Event')]
+    #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'event')]
     private Collection $comments;
 
     
@@ -185,11 +185,13 @@ class Event
     }
 
     #[ORM\PrePersist]
+    #[ORM\PreUpdate]
     public function setUpdatedAtValue(): void
     {
         if ($this->updated_at === null) {
             $this->updated_at = new \DateTimeImmutable();
         }
+        $this->updated_at = new \DateTimeImmutable();
     }
 
     public function getOrganizer(): ?User

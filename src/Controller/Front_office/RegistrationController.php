@@ -40,6 +40,9 @@ class RegistrationController extends AbstractController
             $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
 
             $roleClient = $entityManager->getRepository(Role::class)->findOneBy(['label' => 'ROLE_CLIENT']);
+            if (!$roleClient) {
+                throw new \RuntimeException('Client role is not configured.');
+            }
             $user->setRole($roleClient);
 
             $entityManager->persist($user);
@@ -48,7 +51,7 @@ class RegistrationController extends AbstractController
             // generate a signed url and email it to the user
             $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
                 (new TemplatedEmail())
-                    ->from(new Address('yazidiabdelwaheb@gmail.com', 'Team Event Management'))
+                    ->from(new Address($this->getParameter('mailer_from_email'), $this->getParameter('mailer_from_name')))
                     ->to((string) $user->getEmail())
                     ->subject('Please Confirm your Email')
                     ->htmlTemplate('Front_office/registration/confirmation_email.html.twig')

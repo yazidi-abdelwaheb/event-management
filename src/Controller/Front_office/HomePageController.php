@@ -7,7 +7,6 @@ use App\Entity\Newsletter;
 use App\Repository\CategoryRepository;
 use App\Repository\EventRepository;
 use App\Repository\NewsletterRepository;
-use Doctrine\Common\EventManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -35,52 +34,70 @@ final class HomePageController extends AbstractController
         ]);
     }
 
-    #[Route('/contact', name: 'app_home_page_contact')]
+    #[Route('/contact', name: 'app_home_page_contact', methods: ['GET', 'POST'])]
     public function contact(Request $request,
         EntityManagerInterface $em,
         MailerInterface $mailer
     ): Response
     {
         if ($request->isMethod('POST')) {
+            if (!$this->isCsrfTokenValid('contact_form', $request->request->get('_token'))) {
+                $this->addFlash('error', 'Invalid form submission. Please try again.');
+                return $this->redirectToRoute('app_home_page_contact');
+            }
 
-        $firstName = $request->request->get('first_name');
-        $lastName  = $request->request->get('last_name');
-        $email     = $request->request->get('email');
-        $subject   = $request->request->get('subject');
-        $message   = $request->request->get('message');
+            $firstName = trim((string) $request->request->get('first_name', ''));
+            $lastName  = trim((string) $request->request->get('last_name', ''));
+            $email     = trim((string) $request->request->get('email', ''));
+            $subject   = trim((string) $request->request->get('subject', ''));
+            $message   = trim((string) $request->request->get('message', ''));
 
-        $contact = new Contact();
-        $contact->setFirstName($firstName);
-        $contact->setLastName($lastName);
-        $contact->setEmail($email);
-        $contact->setSubject($subject);
-        $contact->setMessage($message);
+            if ($firstName === '' || $lastName === '' || $email === '' || $subject === '' || $message === '') {
+                $this->addFlash('error', 'Please fill in all required fields.');
+                return $this->redirectToRoute('app_home_page_contact');
+            }
 
-        $em->persist($contact);
-        $em->flush();
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $this->addFlash('error', 'Please enter a valid email address.');
+                return $this->redirectToRoute('app_home_page_contact');
+            }
 
-        
-        $userEmail = (new TemplatedEmail())
-           ->from(new Address('yazidiabdelwaheb@gmail.com', 'Team Event Management'))
-            ->to((string) $email)
-            ->subject('We received your message')
-            ->htmlTemplate('Front_office/home_page/_contact_user.html.twig')
-            ->context([
-                'contact' => $contact
-            ]);
+            $contact = new Contact();
+            $contact->setFirstName($firstName);
+            $contact->setLastName($lastName);
+            $contact->setEmail($email);
+            $contact->setSubject($subject);
+            $contact->setMessage($message);
 
-        $mailer->send($userEmail);
+            $em->persist($contact);
+            $em->flush();
 
-        $this->addFlash('success', 'Message sent successfully!');
+            $userEmail = (new TemplatedEmail())
+                ->from(new Address($this->getParameter('mailer_from_email'), $this->getParameter('mailer_from_name')))
+                ->to($email)
+                ->subject('We received your message')
+                ->htmlTemplate('Front_office/home_page/_contact_user.html.twig')
+                ->context([
+                    'contact' => $contact,
+                ]);
 
-        return $this->redirectToRoute('app_home_page_contact');
-    }
+            try {
+                $mailer->send($userEmail);
+            } catch (\Exception $exception) {
+                $this->addFlash('error', 'Unable to send confirmation email right now. Your message was received.');
+                return $this->redirectToRoute('app_home_page_contact');
+            }
+
+            $this->addFlash('success', 'Message sent successfully!');
+            return $this->redirectToRoute('app_home_page_contact');
+        }
+
         return $this->render('Front_office/home_page/contact.html.twig');
     }
 
 
 
-   /* #[Route('/newsletter', name: 'app_home_page_newsletter', methods: ['GET'])]
+   #[Route('/newsletter', name: 'app_home_page_newsletter', methods: ['GET'])]
     public function newsletter(
         NewsletterRepository $newsRepo, 
         Request $request,
@@ -90,7 +107,7 @@ final class HomePageController extends AbstractController
         $email = $request->request->get('email');
         
         
-        if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $this->addFlash('error', 'Please enter a valid email address.');
             return $this->redirectToRoute('app_home_page');
         }
@@ -120,7 +137,7 @@ final class HomePageController extends AbstractController
         }
         
         return $this->redirectToRoute('app_home_page');
-    }*/
+    }
 
     #[Route('/about', name: 'app_home_page_about')]
     public function about(): Response
