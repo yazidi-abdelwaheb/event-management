@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\EventSubscribeRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
@@ -30,6 +31,9 @@ class EventSubscribe
 
     #[ORM\Column(length: 8)]
     private ?string $phone = null;
+
+    #[ORM\Column(type: Types::JSON, nullable: true)]
+    private ?array $custom_answers = [];
 
     #[ORM\ManyToOne(inversedBy: 'eventSubscribes')]
     #[ORM\JoinColumn(nullable: false)]
@@ -82,6 +86,17 @@ class EventSubscribe
         return $this->created_at;
     }
     
+    public function getCustomAnswers(): array
+    {
+        return $this->custom_answers ?? [];
+    }
+
+    public function setCustomAnswers(?array $customAnswers): static
+    {
+        $this->custom_answers = $customAnswers ?? [];
+
+        return $this;
+    }
 
     public function getPhone(): ?string
     {

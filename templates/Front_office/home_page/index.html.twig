@@ -232,12 +232,14 @@
     <p style="color:rgba(255,255,255,0.65); font-size:15px; margin:0 0 2rem; line-height:1.6;">
       Subscribe to our <b>newsletter</b> and receive the best events and exclusive offers directly in your inbox. No spam, just the good stuff!
     </p>
-    <form class="d-flex gap-2" style="max-width:420px; margin:0 auto;" method="post">
+    <form class="d-flex gap-2" style="max-width:420px; margin:0 auto;" method="post" action="{{ path('app_home_page_newsletter') }}">
+      <input type="hidden" name="_token" value="{{ csrf_token('newsletter_form') }}">
       <input type="email"
+             name="email"
              class="newsletter-input"
              placeholder="Foulen@example.com"
              required>
-      <a href="#" class="btn-newsletter">Subscribe</a>
+      <button type="submit" class="btn-newsletter">Subscribe</button>
     </form>
   </div>
 </section>

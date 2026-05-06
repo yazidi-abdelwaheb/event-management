@@ -40,4 +40,14 @@ class NewsletterRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    public function findByEmail(string $email): ?Newsletter
+    {
+        return $this->createQueryBuilder('n')
+            ->andWhere('n.email = :email')
+            ->setParameter('email', $email)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
 }

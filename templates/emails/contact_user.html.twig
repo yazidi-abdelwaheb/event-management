@@ -1,0 +1,23 @@
+{% extends 'emails/base.html.twig' %}
+
+{% block title %}Message received — Event Management{% endblock %}
+
+{% block content %}
+<div style="background:#16a34a;color:#ffffff;border-radius:14px;padding:20px;margin-bottom:24px;">
+    <strong style="font-size:16px;">✔ Message received</strong>
+</div>
+
+<h1 style="font-size:24px;color:#111827;margin:0 0 16px;">Hello {{ contact.firstName }},</h1>
+<p style="font-size:15px;color:#475569;line-height:1.7;margin:0 0 18px;">
+    We have received your message. Our team will review it and get back to you shortly.
+</p>
+
+<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:18px;margin-bottom:24px;">
+    <p style="font-size:14px;color:#0f172a;margin:0 0 8px;"><strong>Subject:</strong> {{ contact.subject }}</p>
+    <p style="font-size:14px;color:#475569;margin:0;"><strong>Message:</strong><br>{{ contact.message }}</p>
+</div>
+
+<p style="font-size:14px;color:#64748b;margin:0;">
+    Thank you for your trust. This is an automatic email.
+</p>
+{% endblock %}

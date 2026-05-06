@@ -87,6 +87,33 @@
         text-decoration: none; font-size: 13px;
         font-weight: 600; padding: 9px; border-radius: 8px;
     }
+
+    .custom-field-list {
+        display: grid;
+        gap: 1rem;
+    }
+
+    .custom-field-card {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 18px;
+        padding: 1rem;
+        box-shadow: 0 10px 25px rgba(15, 23, 42, 0.04);
+    }
+
+    .custom-field-card .form-control,
+    .custom-field-card .form-select {
+        background: #f8f9fb;
+        border-color: #d1d5db;
+    }
+
+    .custom-field-card .form-check {
+        margin-top: 0.75rem;
+    }
+
+    .custom-field-options-row {
+        display: none;
+    }
 </style>
 {% endblock %}
 
@@ -304,6 +331,60 @@
                             {% endif %}
                         </div>
                     </div>
+                </div>
+
+                <div class="bg-white border rounded-3 p-4 mb-4 custom-field-section">
+                    <div class="d-flex align-items-center gap-2 pb-2 mb-3"
+                         style="border-bottom:2px solid #f3f4f6; font-size:14px; font-weight:700; color:#1a1a2e;">
+                        <div class="form-section-icon">
+                            <i class="bi bi-ui-checks-grid text-white" style="font-size:13px;"></i>
+                        </div>
+                        Custom Registration Fields
+                    </div>
+
+                    <p class="text-muted mb-3" style="font-size:13px;">
+                        Add optional questions that participants will answer when registering for your event.
+                    </p>
+
+                    <div id="custom-fields-collection" class="custom-field-list">
+                        {% for subForm in form.customFields %}
+                            <div class="custom-field-card">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <span class="fw-semibold small text-uppercase">Question {{ loop.index }}</span>
+                                    <button type="button" class="btn btn-sm btn-outline-danger remove-custom-field">
+                                        Remove
+                                    </button>
+                                </div>
+
+                                {{ form_row(subForm.label, {'attr': {'class': 'form-control'}}) }}
+                                {{ form_row(subForm.type, {'attr': {'class': 'form-select custom-field-type'}}) }}
+                                <div class="custom-field-options-row">
+                                    {{ form_row(subForm.options, {'attr': {'class': 'form-control custom-field-options', 'placeholder': 'Option 1, Option 2, Option 3'}}) }}
+                                </div>
+                                <div class="form-check">
+                                    {{ form_widget(subForm.required, {'attr': {'class': 'form-check-input'}}) }}
+                                    {{ form_label(subForm.required, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    {% if form.customFields.vars.prototype is defined %}
+                        <input type="hidden" id="custom-fields-prototype"
+                               data-prototype="{{ form_widget(form.customFields.vars.prototype)|e('html_attr') }}">
+                    {% endif %}
+
+                    <button type="button" class="btn btn-outline-secondary btn-sm mt-3" id="add-custom-field">
+                        Add another registration question
+                    </button>
+
+                    {% if form.customFields.vars.errors|length %}
+                        <div class="text-danger mt-2" style="font-size:12px;">
+                            {% for error in form.customFields.vars.errors %}
+                                {{ error.message }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
 
                 <div class="bg-white border rounded-3 p-4 mb-4">
@@ -550,5 +631,81 @@ function syncImage(input) {
     };
     reader.readAsDataURL(input.files[0]);
 }
+
+function updateCustomFieldOptionsVisibility(card) {
+    const typeSelect = card.querySelector('.custom-field-type');
+    const optionsRow = card.querySelector('.custom-field-options-row');
+    if (!typeSelect || !optionsRow) {
+        return;
+    }
+
+    const show = ['select', 'checkboxes', 'radio'].includes(typeSelect.value);
+    optionsRow.style.display = show ? 'block' : 'none';
+}
+
+function bindCustomFieldCard(card) {
+    if (card.dataset.bound === '1') {
+        return;
+    }
+
+    card.dataset.bound = '1';
+    const typeSelect = card.querySelector('.custom-field-type');
+    const removeButton = card.querySelector('.remove-custom-field');
+
+    if (typeSelect) {
+        typeSelect.addEventListener('change', function() {
+            updateCustomFieldOptionsVisibility(card);
+        });
+        updateCustomFieldOptionsVisibility(card);
+    }
+
+    if (removeButton) {
+        removeButton.addEventListener('click', function() {
+            card.remove();
+            updateFieldIndexes();
+        });
+    }
+}
+
+function updateFieldIndexes() {
+    document.querySelectorAll('#custom-fields-collection .custom-field-card').forEach(function(card, index) {
+        const label = card.querySelector('.fw-semibold');
+        if (label) {
+            label.textContent = 'Question ' + (index + 1);
+        }
+    });
+}
+
+function initCustomFields() {
+    const container = document.getElementById('custom-fields-collection');
+    const prototypeInput = document.getElementById('custom-fields-prototype');
+    const addButton = document.getElementById('add-custom-field');
+
+    if (!container || !prototypeInput || !addButton) {
+        return;
+    }
+
+    container.querySelectorAll('.custom-field-card').forEach(bindCustomFieldCard);
+
+    addButton.addEventListener('click', function() {
+        const index = container.children.length;
+        let newField = prototypeInput.dataset.prototype;
+        newField = newField.replace(/__name__/g, index);
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'custom-field-card';
+        wrapper.innerHTML = '<div class="d-flex justify-content-between align-items-center mb-3">'
+            + '<span class="fw-semibold small text-uppercase">Question ' + (index + 1) + '</span>'
+            + '<button type="button" class="btn btn-sm btn-outline-danger remove-custom-field">Remove</button>'
+            + '</div>' + newField;
+
+        container.appendChild(wrapper);
+        bindCustomFieldCard(wrapper);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    initCustomFields();
+});
 </script>
 {% endblock %}

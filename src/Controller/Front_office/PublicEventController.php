@@ -9,13 +9,11 @@ use App\Form\CommentType;
 use App\Form\EventSubscribeType;
 use App\Repository\EventRepository;
 use App\Repository\EventSubscribeRepository;
+use App\Service\EmailService;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class PublicEventController extends AbstractController
@@ -69,12 +67,14 @@ final class PublicEventController extends AbstractController
     }
 
     #[Route('/event/{id}/subscribe', name: 'app_public_event_subscribe')]
-    public function subscribe(Event $event, Request $request, EventSubscribeRepository $eventSubscribeRepository, EntityManagerInterface $em, MailerInterface $mailer): Response
+    public function subscribe(Event $event, Request $request, EventSubscribeRepository $eventSubscribeRepository, EntityManagerInterface $em, EmailService $emailService): Response
     {
         $subscription = new EventSubscribe();
         $subscription->setEvent($event);
 
-        $form = $this->createForm(EventSubscribeType::class, $subscription);
+        $form = $this->createForm(EventSubscribeType::class, $subscription, [
+            'customFields' => $event->getCustomFields(),
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -93,25 +93,14 @@ final class PublicEventController extends AbstractController
             ]);
             $qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' . urlencode($qrData);
 
-            $email = (new TemplatedEmail())
-                ->from(new Address($this->getParameter('mailer_from_email'), $this->getParameter('mailer_from_name')))
-                ->to($subscription->getEmail())
-                ->subject('✅ Confirmation de votre inscription — ' . $event->getTitle())
-                ->htmlTemplate('Front_office/public_event/event_subscribe/_confirmation_email.html.twig')
-                ->context([
-                    'subscription' => $subscription,
-                    'event'        => $event,
-                    'qrUrl'        => $qrUrl,
-                ]);
-
             try {
-                $mailer->send($email);
+                $emailService->sendEventSubscriptionConfirmation($subscription, $event, $qrUrl);
             } catch (\Exception $exception) {
                 $this->addFlash('warning', 'Subscription saved, but confirmation email could not be sent at this time.');
-                return $this->redirectToRoute('app_public_event_subscription_success', ['id' => $subscription->getId()]);
+                return $this->redirectToRoute('app_public_event_subscription_success', ['id' => $subscription->getId(),'eventId' => $event->getId()]);
             }
 
-            return $this->redirectToRoute('app_public_event_subscription_success', ['id' => $subscription->getId()]);
+            return $this->redirectToRoute('app_public_event_subscription_success', ['id' => $subscription->getId(),'eventId' => $event->getId()]);
         }
 
         return $this->render('Front_office/public_event/event_subscribe/index.html.twig', [

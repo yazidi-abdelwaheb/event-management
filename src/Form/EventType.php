@@ -8,6 +8,8 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use App\Form\CustomFieldType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -61,6 +63,16 @@ class EventType extends AbstractType
                 'label'    => 'Price',
                 'currency' => false,
                 'attr'     => ['placeholder' => '0.00'],
+            ])
+            ->add('customFields', CollectionType::class, [
+                'entry_type' => CustomFieldType::class,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'prototype' => true,
+                'by_reference' => false,
+                'required' => false,
+                'label' => 'Custom Registration Fields',
+                'entry_options' => ['label' => false],
             ])
             ->add('imageFile', FileType::class, [
                 'label'    => 'Event Image',

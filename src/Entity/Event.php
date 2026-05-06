@@ -68,6 +68,9 @@ class Event
     #[ORM\Column(enumType: EventStatus::class)]
     private EventStatus $status = EventStatus::UPCOMING;
 
+    #[ORM\Column(type: Types::JSON, nullable: true)]
+    private ?array $custom_fields = [];
+
     /**
      * @var Collection<int, Comment>
      */
@@ -325,6 +328,25 @@ class Event
     public function setStatus(EventStatus $status): static
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function getCustomFields(): array
+    {
+        return $this->custom_fields ?? [];
+    }
+
+    public function setCustomFields(?array $customFields): static
+    {
+        if ($customFields === null) {
+            $this->custom_fields = [];
+            return $this;
+        }
+
+        $this->custom_fields = array_values(array_filter($customFields, static function ($field): bool {
+            return isset($field['label']) && trim((string) $field['label']) !== '';
+        }));
 
         return $this;
     }

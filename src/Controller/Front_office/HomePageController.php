@@ -7,13 +7,11 @@ use App\Entity\Newsletter;
 use App\Repository\CategoryRepository;
 use App\Repository\EventRepository;
 use App\Repository\NewsletterRepository;
+use App\Service\EmailService;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -37,7 +35,7 @@ final class HomePageController extends AbstractController
     #[Route('/contact', name: 'app_home_page_contact', methods: ['GET', 'POST'])]
     public function contact(Request $request,
         EntityManagerInterface $em,
-        MailerInterface $mailer
+        EmailService $emailService
     ): Response
     {
         if ($request->isMethod('POST')) {
@@ -72,17 +70,8 @@ final class HomePageController extends AbstractController
             $em->persist($contact);
             $em->flush();
 
-            $userEmail = (new TemplatedEmail())
-                ->from(new Address($this->getParameter('mailer_from_email'), $this->getParameter('mailer_from_name')))
-                ->to($email)
-                ->subject('We received your message')
-                ->htmlTemplate('Front_office/home_page/_contact_user.html.twig')
-                ->context([
-                    'contact' => $contact,
-                ]);
-
             try {
-                $mailer->send($userEmail);
+                $emailService->sendContactConfirmation($contact);
             } catch (\Exception $exception) {
                 $this->addFlash('error', 'Unable to send confirmation email right now. Your message was received.');
                 return $this->redirectToRoute('app_home_page_contact');
@@ -97,47 +86,7 @@ final class HomePageController extends AbstractController
 
 
 
-   #[Route('/newsletter', name: 'app_home_page_newsletter', methods: ['GET'])]
-    public function newsletter(
-        NewsletterRepository $newsRepo, 
-        Request $request,
-        ValidatorInterface $validator
-    ): Response
-    {
-        $email = $request->request->get('email');
-        
-        
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $this->addFlash('error', 'Please enter a valid email address.');
-            return $this->redirectToRoute('app_home_page');
-        }
-        
-        
-        if ($newsRepo->findOneBy(['email' => $email])) {
-            $this->addFlash('info', 'This email is already subscribed.');
-            return $this->redirectToRoute('app_home_page');
-        }
-        
-        try {
-            $news = new Newsletter();
-            $news->setEmail($email);
-            
-            // Validate entity
-            $errors = $validator->validate($news);
-            if (count($errors) > 0) {
-                $this->addFlash('error', 'Invalid email address.');
-                return $this->redirectToRoute('app_home_page');
-            }
-            
-            $newsRepo->save($news, true);
-            $this->addFlash('success', 'Successfully subscribed to newsletter!');
-            
-        } catch (\Exception $e) {
-            $this->addFlash('error', 'An error occurred. Please try again.');
-        }
-        
-        return $this->redirectToRoute('app_home_page');
-    }
+   
 
     #[Route('/about', name: 'app_home_page_about')]
     public function about(): Response

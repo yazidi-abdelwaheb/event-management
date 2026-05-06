@@ -1,0 +1,23 @@
+{% extends 'emails/base.html.twig' %}
+
+{% block title %}Newsletter Subscription Confirmed{% endblock %}
+
+{% block content %}
+<div style="background:#e0f2fe;border:1px solid #bae6fd;border-radius:14px;padding:20px;margin-bottom:24px;">
+    <strong style="font-size:16px;color:#0c4a6e;">✅ Newsletter subscription confirmed</strong>
+</div>
+
+<h1 style="font-size:24px;color:#111827;margin:0 0 16px;">Welcome!</h1>
+<p style="font-size:15px;color:#475569;line-height:1.7;margin:0 0 18px;">
+    You are now subscribed to our newsletter. You will receive the best offers and event updates directly in your inbox.
+</p>
+
+<p style="font-size:14px;color:#64748b;margin:0 0 24px;">
+    Email: <strong>{{ newsletter.email }}</strong>
+</p>
+
+<a href="{{ url('app_home_page') }}"
+   style="display:inline-block;background:#1a1a2e;color:#ffffff;padding:14px 26px;border-radius:10px;text-decoration:none;font-weight:600;">
+    Browse events →
+</a>
+{% endblock %}
