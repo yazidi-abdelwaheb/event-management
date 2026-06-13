@@ -1,7 +1,5 @@
 <p align="center">
-  <a href="https://symfony.com" rel="noopener">
-    <img width="200" height="200" src="https://i.imgur.com/FxL5qM0.jpg" alt="Event Management logo">
-  </a>
+  <img width="200" height="200" src="./assets/logo.png" alt="Event Management logo">
 </p>
 
 <h3 align="center">Event Management</h3>
